@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DeepSeek AI</title>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue",
+          "Arial", sans-serif;
+        background-color: #fff;
+        margin: 0;
+        padding: 20px;
+        width: 300px;
+        color: #1d1d1f;
+      }
+      .header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 24px;
+      }
+      .header img {
+        width: 28px;
+        height: 28px;
+        margin-right: 8px;
+      }
+      .header span {
+        font-size: 18px;
+        font-weight: 600;
+        color: #007aff;
+      }
+      .key {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+      }
+      .error-message {
+        color: #ff3b30;
+        font-size: 12px;
+        position: absolute;
+        top: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        text-align: center;
+      }
+      .input-container {
+        width: 100%;
+        position: relative;
+        text-align: center;
+
+      }
+      input {
+        width: 60%;
+        padding: 8px 12px;
+        padding-right: 30px;
+        font-size: 12px;
+        border: 1px solid #d2d2d7;
+        border-radius: 12px;
+        background-color: #F2F2F7;
+        transition: all 0.3s ease;
+        margin-bottom: 12px;
+      }
+
+      input::placeholder {
+        color: #A9A9A9;
+      }
+      input:focus {
+        outline: none;
+        border-color: #0071e3;
+        box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.1);
+        background-color: #ffffff;
+      }
+      .toggle-visibility {
+        background: none;
+        border: none;
+        cursor: pointer;
+        position: absolute;
+        right: 45px;
+        top: 6px;
+        padding: 0;
+      }
+      .toggle-visibility .svg {
+        width: 20px;
+        height: 20px;
+      }
+      a {
+        color: #0071e3;
+        font-size: 12px;
+        text-decoration: none;
+        margin-bottom: 20px;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      button {
+        background-color: #0071e3;
+        color: #ffffff;
+        border: none;
+        border-radius: 8px;
+        padding: 6px 12px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+      }
+      button:hover {
+        background-color: #0077ed;
+      }
+      button:active {
+        background-color: #006edb;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <img src="icons/icon24.png" alt="DeepSeek AI Logo" />
+        <span>DeepSeek AI</span>
+      </div>
+      <div class="key">
+        <div class="error-message" id="errorMessage"></div>
+        <div class="input-container">
+          <input
+            type="password"
+            id="apiKey"
+            required
+            placeholder="在此输入api-key"
+          />
+          <button class="toggle-visibility" id="toggleVisibility">
+            <img class="svg" src="icons/show.svg" alt="" id="iconSwitch" />
+          </button>
+        </div>
+        <a
+          href="https://platform.deepseek.com/api_keys"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          前往获取 API Key
+        </a>
+        <button id="saveButton">保存</button>
+      </div>
+    </div>
+    <script src="popup.js"></script>
+  </body>
+</html>
