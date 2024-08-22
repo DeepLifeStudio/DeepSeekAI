@@ -399,7 +399,7 @@ async function getAIResponse(text, responseElement, signal, ps, iconContainer) {
           {
             role: "system",
             content:
-              "你是一个有帮助的AI助手,不管用户的语言选择，都以中文提供文本回答",
+              "你是一个有帮助的AI助手,不管用户的语言选择，你都必须以中文提供文本回答",
           },
           { role: "user", content: text },
         ],
