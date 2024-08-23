@@ -1,14 +1,37 @@
+pre.hljs {
+  position: relative;
+}
+
+pre.hljs button {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  z-index: 1001;
+  color: white;
+  border: none;
+  padding: 2px 5px;
+  cursor: pointer;
+  border-radius: 4px;
+}
 pre code.hljs {
   display: block;
   overflow-x: auto;
   padding: 1em;
 }
+code {
+  color: #000;
+  font-family: "Fira Code", "Fira Mono", Menlo, Consolas, "DejaVu Sans Mono",
+    monospace;
+}
 code.hljs {
   padding: 3px 5px;
 }
 .hljs {
-  background: #fff;
+  background: #ffffffe3;
   color: #000;
+  font-family: "Fira Code", "Fira Mono", Menlo, Consolas, "DejaVu Sans Mono",
+    monospace;
+  font-size: 16px;
 }
 .xml .hljs-meta {
   color: silver;
@@ -81,4 +104,41 @@ code.hljs {
 }
 .hljs-emphasis {
   font-style: italic;
+}
+.os-scrollbar-handle {
+  max-width: 10px;
+}
+.ps__rail-y {
+  right: 0 !important;
+  left: auto !important;
+}
+.icon-wrapper .tooltip {
+  position: relative;
+}
+
+.icon-wrapper .tooltip:hover::after {
+  content: attr(title);
+  position: absolute;
+  bottom: 120%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 14px;
+  white-space: nowrap;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.icon-wrapper .tooltip:hover::before {
+  content: "";
+  position: absolute;
+  bottom: 120%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: rgba(0, 0, 0, 0.8);
+  pointer-events: none;
 }

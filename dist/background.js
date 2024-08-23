@@ -1,8 +1,1 @@
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.action === "getApiKey") {
-    chrome.storage.sync.get('apiKey', function(data) {
-      sendResponse({apiKey: data.apiKey});
-    });
-    return true;  // 保持消息通道开放，因为 sendResponse 是异步的
-  }
-});
+chrome.runtime.onMessage.addListener(((e,i,n)=>{if("getApiKey"===e.action)return chrome.storage.sync.get("apiKey",(function(e){n({apiKey:e.apiKey})})),!0}));

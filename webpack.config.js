@@ -1,14 +1,10 @@
 const path = require("path");
-const TerserPlugin = require("terser-webpack-plugin");
-
+const CopyPlugin = require("copy-webpack-plugin");
 module.exports = {
-  mode: "production", // or 'development'
-  entry: {
-    content: "./src/content.js",
-  },
+  entry: "./src/content/content.js",
   output: {
+    filename: "content.js",
     path: path.resolve(__dirname, "dist"),
-    filename: "[name].js",
   },
   module: {
     rules: [
@@ -16,25 +12,21 @@ module.exports = {
         test: /\.css$/,
         use: ["style-loader", "css-loader"],
       },
-      {
-        test: /\.js$/,
-        exclude: /node_modules/,
-        use: {
-          loader: "babel-loader",
-          options: {
-            presets: ["@babel/preset-env"],
-          },
-        },
-      },
     ],
   },
+  plugins: [
+    new CopyPlugin({
+      patterns: [
+        { from: "./src/manifest.json", to: "manifest.json" },
+        { from: "./src/icons", to: "icons" },
+        { from: "./src/style.css", to: "style.css" },
+        { from: "./src/popup", to: "popup" },
+        { from: "./src/background.js", to: "background.js" },
+      ],
+    }),
+  ],
   resolve: {
     extensions: [".js"],
   },
-  optimization: {
-    minimize: true,
-    minimizer: [new TerserPlugin()],
-    usedExports: true,
-    splitChunks: false, // 禁用代码分割
-  },
+  mode: "production",
 };

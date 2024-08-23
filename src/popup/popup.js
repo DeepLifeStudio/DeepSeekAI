@@ -13,10 +13,10 @@ document.addEventListener("DOMContentLoaded", function () {
   toggleButton.addEventListener("click", function () {
     if (apiKeyInput.type === "password") {
       apiKeyInput.type = "text";
-      iconSwitch.src = "icons/hiddle.svg";
+      iconSwitch.src = "../icons/hiddle.svg";
     } else {
       apiKeyInput.type = "password";
-      iconSwitch.src = "icons/show.svg";
+      iconSwitch.src = "../icons/show.svg";
     }
   });
   function validateApiKey(apiKey, callback) {
