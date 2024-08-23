@@ -1,1 +1,0 @@
-chrome.runtime.onMessage.addListener(((e,i,n)=>{if("getApiKey"===e.action)return chrome.storage.sync.get("apiKey",(function(e){n({apiKey:e.apiKey})})),!0}));
