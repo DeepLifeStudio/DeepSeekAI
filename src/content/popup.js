@@ -4,6 +4,7 @@ import { dragMoveListener, resizeMoveListener } from "./drag";
 import interact from "interactjs";
 import { getAIResponse } from "./api";
 import { setAllowAutoScroll, updateAllowAutoScroll } from "./scrollControl";
+
 export function createPopup(text, rect) {
   const popup = document.createElement("div");
 
@@ -69,7 +70,7 @@ export function createPopup(text, rect) {
     abortController.signal,
     ps,
     iconContainer,
-    aiResponseContainer,
+    aiResponseContainer
   );
 
   refreshIcon.addEventListener("click", (event) => {
@@ -83,7 +84,7 @@ export function createPopup(text, rect) {
       abortController.signal,
       ps,
       iconContainer,
-      aiResponseContainer,
+      aiResponseContainer
     );
   });
 
@@ -91,18 +92,6 @@ export function createPopup(text, rect) {
     setAllowAutoScroll(false);
     updateAllowAutoScroll(aiResponseContainer);
   });
-
-  const clickOutsideHandler = (e) => {
-    if (!popup.contains(e.target)) {
-      document.body.removeChild(popup);
-      document.removeEventListener("click", clickOutsideHandler);
-      abortController.abort();
-    }
-  };
-
-  setTimeout(() => {
-    document.addEventListener("click", clickOutsideHandler);
-  }, 0);
 
   const dragHandle = createDragHandle();
   popup.appendChild(dragHandle);
@@ -131,18 +120,19 @@ export function createPopup(text, rect) {
 
 export function stylePopup(popup, rect) {
   popup.id = "ai-popup";
-  popup.style.position = "absolute";
-  popup.style.width = "580px";
-  popup.style.height = "380px";
-  popup.style.paddingTop = "20px";
-  popup.style.backgroundColor = "#f6f6f6a8";
-  popup.style.boxShadow =
-    "0 0 1px #0009,0 0 2px #0000000d,0 38px 90px #00000040";
-  popup.style.backdropFilter = "blur(10px)";
-  popup.style.borderRadius = "12px";
-  popup.style.zIndex = "1000";
-  popup.style.fontFamily = "Arial, sans-serif";
-  popup.style.overflow = "auto";
+  Object.assign(popup.style, {
+    position: "absolute",
+    width: "580px",
+    height: "380px",
+    paddingTop: "20px",
+    backgroundColor: "#f6f6f6a8",
+    boxShadow: "0 0 1px #0009, 0 0 2px #0000000d, 0 38px 90px #00000040",
+    backdropFilter: "blur(10px)",
+    borderRadius: "12px",
+    zIndex: "1000",
+    fontFamily: "Arial, sans-serif",
+    overflow: "auto",
+  });
 
   const { adjustedX, adjustedY } = adjustPopupPosition(rect, popup);
   popup.style.left = `${adjustedX}px`;
@@ -150,12 +140,14 @@ export function stylePopup(popup, rect) {
 }
 
 export function styleResponseContainer(container) {
-  container.style.position = "relative";
+  Object.assign(container.style, {
+    position: "relative",
+    width: "100%",
+    height: "calc(100% - 40px)",
+    marginTop: "20px",
+    overflow: "auto",
+  });
   container.id = "ai-response-container";
-  container.style.width = "100%";
-  container.style.height = "calc(100% - 40px)";
-  container.style.marginTop = "20px";
-  container.style.overflow = "auto";
 }
 
 function adjustPopupPosition(rect, popup) {
@@ -173,42 +165,101 @@ function adjustPopupPosition(rect, popup) {
     adjustedY = rect.top + scrollY - popupHeight;
   }
 
-  if (adjustedX < scrollX) adjustedX = scrollX;
-  if (adjustedX + popupWidth > viewportWidth + scrollX)
-    adjustedX = viewportWidth + scrollX - popupWidth;
-  if (adjustedY < scrollY) adjustedY = scrollY;
-  if (adjustedY + popupHeight > viewportHeight + scrollY)
-    adjustedY = viewportHeight + scrollY - popupHeight;
+  adjustedX = Math.max(
+    scrollX,
+    Math.min(adjustedX, viewportWidth + scrollX - popupWidth)
+  );
+  adjustedY = Math.max(
+    scrollY,
+    Math.min(adjustedY, viewportHeight + scrollY - popupHeight)
+  );
 
   return { adjustedX, adjustedY };
 }
 
 function createDragHandle() {
   const dragHandle = document.createElement("div");
-  dragHandle.style.position = "absolute";
-  dragHandle.style.top = "0";
-  dragHandle.style.left = "0";
-  dragHandle.style.width = "100%";
-  dragHandle.style.height = "40px";
-  dragHandle.style.backgroundColor = "#F2F2F7";
-  dragHandle.style.cursor = "move";
-  dragHandle.style.display = "flex";
-  dragHandle.style.alignItems = "center";
-  dragHandle.style.justifyContent = "center";
-  dragHandle.style.marginBottom = "10px";
-  dragHandle.style.fontWeight = "bold";
-  dragHandle.style.color = "#007AFF";
-  dragHandle.style.fontSize = "16px";
+  Object.assign(dragHandle.style, {
+    position: "absolute",
+    top: "0",
+    left: "0",
+    width: "100%",
+    height: "40px",
+    backgroundColor: "#F2F2F7",
+    cursor: "move",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: "0 10px",
+    boxSizing: "border-box",
+  });
+
+  const titleContainer = document.createElement("div");
+  titleContainer.style.display = "flex";
+  titleContainer.style.alignItems = "center";
 
   const logo = document.createElement("img");
   logo.src = chrome.runtime.getURL("icons/icon24.png");
   logo.style.height = "24px";
   logo.style.marginRight = "10px";
 
-  dragHandle.appendChild(logo);
-
   const textNode = document.createTextNode("DeepSeek AI");
-  dragHandle.appendChild(textNode);
+  titleContainer.appendChild(logo);
+  titleContainer.appendChild(textNode);
+
+  const closeButton = document.createElement("button");
+  Object.assign(closeButton.style, {
+    display: "none",
+    background: "none",
+    border: "none",
+    cursor: "pointer",
+    padding: "0",
+    transition: "all 0.2s ease",
+    position: "absolute",
+    right: "10px",
+  });
+
+  const closeIcon = document.createElement("img");
+  closeIcon.src = chrome.runtime.getURL("icons/close.svg");
+  closeIcon.style.width = "20px";
+  closeIcon.style.height = "20px";
+
+  closeButton.appendChild(closeIcon);
+
+  dragHandle.appendChild(titleContainer);
+  dragHandle.appendChild(closeButton);
+
+  dragHandle.addEventListener("mouseenter", () => {
+    closeButton.style.display = "block";
+  });
+
+  dragHandle.addEventListener("mouseleave", () => {
+    closeButton.style.display = "none";
+    // 重置关闭按钮状态
+    closeIcon.src = chrome.runtime.getURL("icons/close.svg");
+    closeButton.style.transform = "scale(1)";
+  });
+
+  closeButton.addEventListener("mouseenter", () => {
+    closeIcon.src = chrome.runtime.getURL("icons/closeClicked.svg");
+    closeButton.style.transform = "scale(1.1)";
+  });
+
+  closeButton.addEventListener("mouseleave", () => {
+    closeIcon.src = chrome.runtime.getURL("icons/close.svg");
+    closeButton.style.transform = "scale(1)";
+  });
+
+  closeButton.addEventListener("click", (event) => {
+    event.stopPropagation();
+
+    setTimeout(() => {
+      const popup = document.getElementById("ai-popup");
+      if (popup) {
+        document.body.removeChild(popup);
+      }
+    }, 200);
+  });
 
   return dragHandle;
 }

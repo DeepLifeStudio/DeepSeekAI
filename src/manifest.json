@@ -36,7 +36,9 @@
         "icons/copy.svg",
         "icons/redo.svg",
         "icons/redoClicked.svg",
-        "icons/copyClicked.svg"
+        "icons/copyClicked.svg",
+        "icons/close.svg",
+        "icons/closeClicked.svg"
       ],
 
       "matches": ["<all_urls>"]
