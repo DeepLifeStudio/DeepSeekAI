@@ -35,7 +35,7 @@ export async function getAIResponse(
           {
             role: "system",
             content:
-              "你是一个有帮助的AI助手,不管用户的语言选择，你都必须以中文提供文本回答",
+              "你是一个有帮助的AI助手，无论用户选择哪种语言，你都能够以用户选择的语言提供文本回答。",
           },
           { role: "user", content: text },
         ],
