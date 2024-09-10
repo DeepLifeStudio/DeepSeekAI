@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "DeepSeek AI",
   "description": "DeepSeek AI助手旨在为用户提供即时、智能的网页内容分析与回答服务。通过集成先进的人工智能大模型，用户可以轻松选择网页上的任何文本内容，并立即获得深度、准确的AI回答。",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "permissions": ["storage"],
   "content_scripts": [
     {
