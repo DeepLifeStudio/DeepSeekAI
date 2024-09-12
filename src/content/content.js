@@ -4,6 +4,7 @@ import { createPopup, stylePopup, styleResponseContainer } from "./popup";
 import "perfect-scrollbar/css/perfect-scrollbar.css";
 
 let aiResponseContainer;
+let isCreatingPopup = false;
 
 const link = document.createElement("link");
 link.rel = "stylesheet";
@@ -11,6 +12,8 @@ link.href = chrome.runtime.getURL("style.css");
 document.head.appendChild(link);
 
 document.addEventListener("mouseup", function (event) {
+  if (isCreatingPopup) return; // 如果正在创建 popup，不执行后续操作
+
   const selectedText = window.getSelection().toString().trim();
   if (selectedText && event.button === 0) {
     const range = window.getSelection().getRangeAt(0);
@@ -19,20 +22,42 @@ document.addEventListener("mouseup", function (event) {
 
     document.body.appendChild(icon);
 
-    icon.addEventListener("click", () => {
+    icon.addEventListener("click", function iconClickHandler(e) {
+      e.stopPropagation();
+      e.preventDefault();
+
+      if (isCreatingPopup) return; // 防止重复创建
+      isCreatingPopup = true;
+
+      // 立即移除事件监听器，防止多次触发
+      icon.removeEventListener("click", iconClickHandler);
+
       createPopup(selectedText, rect);
-      window.getSelection().removeAllRanges();
-      document.body.removeChild(icon);
+
+      // 使用 setTimeout 来确保 popup 创建后再移除图标和选择
+      setTimeout(() => {
+        if (document.body.contains(icon)) {
+          document.body.removeChild(icon);
+        }
+        window.getSelection().removeAllRanges();
+        isCreatingPopup = false; // 重置标志
+      }, 100);
     });
-    document.addEventListener(
-      "mousedown",
-      (e) => handleDocumentClick(e, icon, range),
-      { once: true }
-    );
+
+    document.addEventListener("mousedown", function documentClickHandler(e) {
+      if (!isCreatingPopup && !icon.contains(e.target)) {
+        document.body.removeChild(icon);
+        window.getSelection().removeAllRanges();
+      }
+      // 移除事件监听器
+      document.removeEventListener("mousedown", documentClickHandler);
+    });
   }
 });
 
 function handleDocumentClick(event, icon, range) {
+  if (isCreatingPopup) return; // 如果正在创建 popup，不执行后续操作
+
   const selection = window.getSelection();
   const clickedIcon = icon.contains(event.target);
   const clickedInsideSelection = isClickInsideSelection(event, range);
@@ -57,5 +82,4 @@ function isClickInsideSelection(event, range) {
     event.clientY <= rect.bottom
   );
 }
-
 

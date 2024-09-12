@@ -203,7 +203,9 @@ function createDragHandle() {
   logo.style.height = "24px";
   logo.style.marginRight = "10px";
 
-  const textNode = document.createTextNode("DeepSeek AI");
+  const textNode = document.createElement("span"); // 使用 span 元素来包裹文本
+  textNode.style.fontWeight = "bold"; // 设置加粗样式
+  textNode.textContent = "DeepSeek AI"; // 设置文本内容
   titleContainer.appendChild(logo);
   titleContainer.appendChild(textNode);
 
