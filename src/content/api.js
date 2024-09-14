@@ -1,5 +1,6 @@
 import { md } from "./markdown";
 import { getAllowAutoScroll } from "./scrollControl";
+
 export async function getAIResponse(
   text,
   responseElement,
@@ -12,8 +13,9 @@ export async function getAIResponse(
   let allowAutoScroll = true;
   iconContainer.style.display = "none";
   iconContainer.dataset.ready = "false";
-  const { apiKey } = await new Promise((resolve) => {
-    chrome.runtime.sendMessage({ action: "getApiKey" }, resolve);
+
+  const { apiKey, language } = await new Promise((resolve) => {
+    chrome.runtime.sendMessage({ action: "getApiKeyAndLanguage" }, resolve);
   });
 
   if (!apiKey) {
@@ -34,8 +36,11 @@ export async function getAIResponse(
         messages: [
           {
             role: "system",
-            content:
-              "你是一个有帮助的AI助手，无论用户选择哪种语言，你都能够以用户选择的语言提供文本回答。",
+            content: `You are a helpful AI assistant. ${
+              language === "auto"
+                ? "Please detect the language of the user's input and respond in the same language."
+                : `The user's preferred language is ${language}. Regardless of the input language, you must respond in ${language} from now on.`
+            } Always prioritize clear and effective communication.`,
           },
           { role: "user", content: text },
         ],
@@ -90,7 +95,7 @@ export async function getAIResponse(
     iconContainer.dataset.ready = "true";
   } catch (error) {
     console.error("Fetch error:", error);
-    responseElement.innerHTML = "请求失败，请稍后重试。";
+    responseElement.innerHTML = "Request failed. Please try again later.";
   }
 }
 

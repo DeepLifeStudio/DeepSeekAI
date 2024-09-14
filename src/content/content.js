@@ -1,18 +1,35 @@
-import { createIcon, createSvgIcon } from "./icon";
-import { createPopup, stylePopup, styleResponseContainer } from "./popup";
-
+import { createIcon } from "./icon";
+import { createPopup } from "./popup";
 import "perfect-scrollbar/css/perfect-scrollbar.css";
 
 let aiResponseContainer;
 let isCreatingPopup = false;
+let canCreateIcon = true;
 
 const link = document.createElement("link");
 link.rel = "stylesheet";
 link.href = chrome.runtime.getURL("style.css");
 document.head.appendChild(link);
 
+// Function to handle popup creation
+function handlePopupCreation(selectedText, rect) {
+  if (isCreatingPopup) return;
+  isCreatingPopup = true;
+  canCreateIcon = false;
+
+  // Create popup
+  createPopup(selectedText, rect);
+
+  // Reset flags after a short delay
+  setTimeout(() => {
+    isCreatingPopup = false;
+    canCreateIcon = true;
+  }, 100);
+}
+
+// Handle mouseup event to create icon
 document.addEventListener("mouseup", function (event) {
-  if (isCreatingPopup) return; // 如果正在创建 popup，不执行后续操作
+  if (isCreatingPopup || !canCreateIcon) return;
 
   const selectedText = window.getSelection().toString().trim();
   if (selectedText && event.button === 0) {
@@ -22,57 +39,55 @@ document.addEventListener("mouseup", function (event) {
 
     document.body.appendChild(icon);
 
+    // Handle icon click event
     icon.addEventListener("click", function iconClickHandler(e) {
       e.stopPropagation();
       e.preventDefault();
 
-      if (isCreatingPopup) return; // 防止重复创建
-      isCreatingPopup = true;
+      // Clear selection
+      window.getSelection().removeAllRanges();
 
-      // 立即移除事件监听器，防止多次触发
-      icon.removeEventListener("click", iconClickHandler);
-
-      createPopup(selectedText, rect);
-
-      // 使用 setTimeout 来确保 popup 创建后再移除图标和选择
-      setTimeout(() => {
+      // Remove icon and create popup
+      requestAnimationFrame(() => {
         if (document.body.contains(icon)) {
           document.body.removeChild(icon);
         }
-        window.getSelection().removeAllRanges();
-        isCreatingPopup = false; // 重置标志
-      }, 100);
+        handlePopupCreation(selectedText, rect);
+      });
     });
 
-    document.addEventListener("mousedown", function documentClickHandler(e) {
-      if (!isCreatingPopup && !icon.contains(e.target)) {
+    // Handle document mousedown event
+    const documentClickHandler = function (e) {
+      if (e.button === 2 && !icon.contains(e.target)) {
+        // Right-click, only remove icon
+        document.body.removeChild(icon);
+        e.preventDefault();
+      } else if (e.button === 0 && !icon.contains(e.target)) {
+        // Left-click, remove icon and selection
         document.body.removeChild(icon);
         window.getSelection().removeAllRanges();
       }
-      // 移除事件监听器
       document.removeEventListener("mousedown", documentClickHandler);
-    });
+      canCreateIcon = true;
+    };
+
+    document.addEventListener("mousedown", documentClickHandler);
   }
 });
 
-function handleDocumentClick(event, icon, range) {
-  if (isCreatingPopup) return; // 如果正在创建 popup，不执行后续操作
-
-  const selection = window.getSelection();
-  const clickedIcon = icon.contains(event.target);
-  const clickedInsideSelection = isClickInsideSelection(event, range);
-
-  if (!clickedIcon && !clickedInsideSelection) {
-    document.body.removeChild(icon);
-    selection.removeAllRanges();
-  } else if (event.button === 2 && clickedInsideSelection) {
-    document.body.removeChild(icon);
-  } else if (event.button === 0 && clickedInsideSelection) {
-    document.body.removeChild(icon);
-    selection.removeAllRanges();
+// Listen for messages from the background script
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.action === "createPopup") {
+    const selection = window.getSelection();
+    if (selection.rangeCount > 0) {
+      const range = selection.getRangeAt(0);
+      const rect = range.getBoundingClientRect();
+      handlePopupCreation(request.selectedText, rect);
+    }
   }
-}
+});
 
+// Helper function to check if click is inside selection
 function isClickInsideSelection(event, range) {
   const rect = range.getBoundingClientRect();
   return (
@@ -82,4 +97,3 @@ function isClickInsideSelection(event, range) {
     event.clientY <= rect.bottom
   );
 }
-
