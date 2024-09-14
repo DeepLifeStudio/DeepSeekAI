@@ -14,6 +14,23 @@
         width: 300px;
         color: #1d1d1f;
       }
+      .language-switch {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 16px;
+      }
+      .language-switch label {
+        margin-right: 10px;
+        font-size: 14px;
+      }
+      select {
+        padding: 4px 8px;
+        font-size: 14px;
+        border: 1px solid #d2d2d7;
+        border-radius: 8px;
+        background-color: #f2f2f7;
+      }
       .header {
         display: flex;
         align-items: center;
@@ -50,7 +67,6 @@
         width: 100%;
         position: relative;
         text-align: center;
-
       }
       input {
         width: 60%;
@@ -59,13 +75,13 @@
         font-size: 12px;
         border: 1px solid #d2d2d7;
         border-radius: 12px;
-        background-color: #F2F2F7;
+        background-color: #f2f2f7;
         transition: all 0.3s ease;
         margin-bottom: 12px;
       }
 
       input::placeholder {
-        color: #A9A9A9;
+        color: #a9a9a9;
       }
       input:focus {
         outline: none;
@@ -140,6 +156,23 @@
         >
           前往获取 API Key
         </a>
+        <div class="language-switch">
+          <label for="language">首选语言：</label>
+          <select id="language">
+            <option value="auto">自动检测</option>
+            <option value="zh">中文</option>
+            <option value="en">English</option>
+            <option value="es">Español</option>
+            <option value="fr">Français</option>
+            <option value="de">Deutsch</option>
+            <option value="ja">日本語</option>
+            <option value="ko">한국어</option>
+            <option value="ru">Русский</option>
+            <option value="ar">العربية</option>
+            <option value="hi">हिन्दी</option>
+            <!-- Add more languages as needed -->
+          </select>
+        </div>
         <button id="saveButton">保存</button>
       </div>
     </div>

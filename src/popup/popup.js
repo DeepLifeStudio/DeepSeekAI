@@ -4,12 +4,18 @@ document.addEventListener("DOMContentLoaded", function () {
   const errorMessage = document.getElementById("errorMessage");
   const toggleButton = document.getElementById("toggleVisibility");
   const iconSwitch = document.getElementById("iconSwitch");
-  // 加载已保存的API密钥
-  chrome.storage.sync.get("apiKey", function (data) {
+  const languageSelect = document.getElementById("language");
+
+  // Load saved API key and language preference
+  chrome.storage.sync.get(["apiKey", "language"], function (data) {
     if (data.apiKey) {
       apiKeyInput.value = data.apiKey;
     }
+    if (data.language) {
+      languageSelect.value = data.language;
+    }
   });
+
   toggleButton.addEventListener("click", function () {
     if (apiKeyInput.type === "password") {
       apiKeyInput.type = "text";
@@ -19,6 +25,7 @@ document.addEventListener("DOMContentLoaded", function () {
       iconSwitch.src = "../icons/show.svg";
     }
   });
+
   function validateApiKey(apiKey, callback) {
     fetch("https://api.deepseek.com/chat/completions", {
       method: "POST",
@@ -47,9 +54,10 @@ document.addEventListener("DOMContentLoaded", function () {
       });
   }
 
-  // 保存API密钥
+  // Save API key and language preference
   saveButton.addEventListener("click", function () {
     const apiKey = apiKeyInput.value.trim();
+    const language = languageSelect.value;
 
     if (apiKey === "") {
       errorMessage.textContent = "api-key不能为空!";
@@ -58,12 +66,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
     validateApiKey(apiKey, function (isValid) {
       if (isValid) {
-        chrome.storage.sync.set({ apiKey: apiKey }, function () {
-          errorMessage.textContent = "api-key已保存!";
-          setTimeout(function () {
-            errorMessage.textContent = "";
-          }, 2000);
-        });
+        chrome.storage.sync.set(
+          { apiKey: apiKey, language: language },
+          function () {
+            errorMessage.textContent = "设置已保存!";
+            setTimeout(function () {
+              errorMessage.textContent = "";
+            }, 2000);
+          }
+        );
       } else {
         errorMessage.textContent = "api-key无效!";
       }
