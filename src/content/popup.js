@@ -13,8 +13,18 @@ export function createPopup(text, rect) {
   const aiResponseContainer = document.createElement("div");
   styleResponseContainer(aiResponseContainer);
   aiResponseElement.id = "ai-response";
-  aiResponseElement.style.padding = "10px 30px 0";
-  aiResponseElement.style.fontSize = "16px";
+  aiResponseElement.style.padding = "10px 40px 0";
+  aiResponseElement.style.fontSize = "14px";
+  const initialQuestionElement = document.createElement("div");
+  initialQuestionElement.className = "user-question";
+  initialQuestionElement.textContent = text;
+  aiResponseElement.appendChild(initialQuestionElement);
+
+  // 添加初始的 AI 回答（先显示"AI正在思考..."）
+  const initialAnswerElement = document.createElement("div");
+  initialAnswerElement.className = "ai-answer";
+  initialAnswerElement.textContent = "AI正在思考...";
+  aiResponseElement.appendChild(initialAnswerElement);
   aiResponseContainer.style.paddingBottom = "10px";
   const iconContainer = document.createElement("div");
   iconContainer.className = "icon-wrapper";
@@ -22,6 +32,7 @@ export function createPopup(text, rect) {
     gap: "10px",
     position: "relative",
     display: "none",
+    bottom: "20px",
   });
   const copyIcon = createSvgIcon("copy", "复制");
   const refreshIcon = createSvgIcon("redo", "重答");
@@ -66,7 +77,7 @@ export function createPopup(text, rect) {
   let abortController = new AbortController();
   getAIResponse(
     text,
-    aiResponseElement,
+    initialAnswerElement,
     abortController.signal,
     ps,
     iconContainer,
@@ -75,17 +86,29 @@ export function createPopup(text, rect) {
 
   refreshIcon.addEventListener("click", (event) => {
     event.stopPropagation();
-    const aiResponseElement = document.getElementById("ai-response");
     abortController.abort();
     abortController = new AbortController();
-    getAIResponse(
-      text,
-      aiResponseElement,
-      abortController.signal,
-      ps,
-      iconContainer,
-      aiResponseContainer
-    );
+
+    const aiAnswers = aiResponseElement.getElementsByClassName("ai-answer");
+    const lastAiAnswer = aiAnswers[aiAnswers.length - 1];
+    let userQuestion = lastAiAnswer.previousElementSibling;
+    while (userQuestion && !userQuestion.classList.contains("user-question")) {
+      userQuestion = userQuestion.previousElementSibling;
+    }
+
+    if (userQuestion && lastAiAnswer) {
+      const questionText = userQuestion.textContent;
+      lastAiAnswer.textContent = "AI正在思考...";
+      getAIResponse(
+        questionText,
+        lastAiAnswer,
+        abortController.signal,
+        ps,
+        iconContainer,
+        aiResponseContainer,
+        true
+      );
+    }
   });
 
   aiResponseContainer.addEventListener("wheel", () => {
@@ -116,6 +139,107 @@ export function createPopup(text, rect) {
       listeners: { move: resizeMoveListener },
     })
     .ignoreFrom(".ps__rail-y");
+
+  const questionInputContainer =
+    createQuestionInputContainer(aiResponseContainer);
+  popup.appendChild(questionInputContainer);
+}
+
+function createQuestionInputContainer(aiResponseContainer) {
+  const container = document.createElement("div");
+  Object.assign(container.style, {
+    position: "absolute",
+    bottom: "8px",
+    left: "0",
+    width: "100%",
+    padding: "0 10px",
+    boxSizing: "border-box",
+  });
+
+  container.innerHTML = `
+    <div class="input-container">
+      <textarea class="expandable-textarea" placeholder="输入您的问题..."></textarea>
+      <svg class="send-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M22 2L11 13" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+  `;
+
+  const textarea = container.querySelector(".expandable-textarea");
+  const sendIcon = container.querySelector(".send-icon");
+  const ps = new PerfectScrollbar(textarea, {
+    suppressScrollX: true,
+    wheelPropagation: false,
+  });
+  textarea.addEventListener("input", function () {
+    this.style.height = "auto";
+    this.style.height = this.scrollHeight + "px";
+  });
+
+  textarea.addEventListener("focus", function () {
+    this.style.minHeight = "60px";
+  });
+
+  textarea.addEventListener("blur", function () {
+    if (this.value.trim() === "") {
+      this.style.height = "40px";
+      this.style.minHeight = "40px";
+    }
+  });
+
+  function sendQuestion() {
+    const question = textarea.value.trim();
+    if (question) {
+      sendQuestionToAI(question);
+      textarea.value = "";
+      textarea.style.height = "40px";
+      textarea.style.minHeight = "40px";
+    }
+  }
+
+  textarea.addEventListener("keydown", function (event) {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      sendQuestion();
+    }
+  });
+
+  sendIcon.addEventListener("click", sendQuestion);
+
+  return container;
+}
+
+function sendQuestionToAI(question) {
+  const aiResponseElement = document.getElementById("ai-response");
+  const aiResponseContainer = document.getElementById("ai-response-container");
+  const iconContainer = document.querySelector(".icon-wrapper");
+  const ps = new PerfectScrollbar(aiResponseContainer, {
+    suppressScrollX: true,
+    wheelPropagation: false,
+  });
+
+  const questionElement = document.createElement("div");
+  questionElement.className = "user-question";
+  questionElement.textContent = `${question}`;
+  aiResponseElement.appendChild(questionElement);
+
+  const answerElement = document.createElement("div");
+  answerElement.className = "ai-answer";
+  answerElement.textContent = "AI正在思考...";
+  aiResponseElement.appendChild(answerElement);
+
+  aiResponseContainer.scrollTop = aiResponseContainer.scrollHeight;
+
+  let abortController = new AbortController();
+  getAIResponse(
+    question,
+    answerElement,
+    abortController.signal,
+    ps,
+    iconContainer,
+    aiResponseContainer
+  );
 }
 
 export function stylePopup(popup, rect) {
@@ -131,7 +255,7 @@ export function stylePopup(popup, rect) {
     borderRadius: "12px",
     zIndex: "1000",
     fontFamily: "Arial, sans-serif",
-    overflow: "auto",
+    overflow: "hidden",
   });
 
   const { adjustedX, adjustedY } = adjustPopupPosition(rect, popup);
@@ -143,7 +267,7 @@ export function styleResponseContainer(container) {
   Object.assign(container.style, {
     position: "relative",
     width: "100%",
-    height: "calc(100% - 40px)",
+    height: "calc(100% - 60px)",
     marginTop: "20px",
     overflow: "auto",
   });
@@ -203,9 +327,9 @@ function createDragHandle() {
   logo.style.height = "24px";
   logo.style.marginRight = "10px";
 
-  const textNode = document.createElement("span"); // 使用 span 元素来包裹文本
-  textNode.style.fontWeight = "bold"; // 设置加粗样式
-  textNode.textContent = "DeepSeek AI"; // 设置文本内容
+  const textNode = document.createElement("span");
+  textNode.style.fontWeight = "bold";
+  textNode.textContent = "DeepSeek AI";
   titleContainer.appendChild(logo);
   titleContainer.appendChild(textNode);
 
@@ -237,7 +361,6 @@ function createDragHandle() {
 
   dragHandle.addEventListener("mouseleave", () => {
     closeButton.style.display = "none";
-    // 重置关闭按钮状态
     closeIcon.src = chrome.runtime.getURL("icons/close.svg");
     closeButton.style.transform = "scale(1)";
   });
@@ -265,3 +388,81 @@ function createDragHandle() {
 
   return dragHandle;
 }
+
+const styles = `
+
+  #ai-response{
+    display: flex;
+    flex-direction: column;
+    gap:10px;
+  }
+
+  .ai-answer{
+    align-self: flex-start;
+    background-color: #f0f0f0c9;
+    border-radius: 15px;
+    padding: 8px 10px;
+    word-wrap: break-word;
+  }
+
+  .user-question{
+    align-self: flex-end;
+    background-color:  #007aff;
+    border-radius: 15px;
+    padding: 8px 10px;
+    color: white;
+    word-wrap: break-word;
+  }
+
+  .input-container {
+    position: relative;
+    width: calc(100% - 20px);
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .expandable-textarea {
+    width: calc(100% - 65px);
+    height: 40px;
+    min-height: 40px;
+    max-height: 80px;
+    padding: 10px 40px 10px 10px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    resize: none;
+    overflow-y: auto;
+    transition: all 0.3s ease;
+    font-size: 16px;
+    box-sizing: border-box;
+    line-height: 18px;
+  }
+
+  .expandable-textarea:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+  }
+
+  .send-icon {
+    position: absolute;
+    right: 40px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 22px;
+    height: 22px;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+  }
+
+  .send-icon:hover {
+    opacity: 1;
+  }
+`;
+
+const styleSheet = document.createElement("style");
+styleSheet.type = "text/css";
+styleSheet.innerText = styles;
+document.head.appendChild(styleSheet);

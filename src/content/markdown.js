@@ -58,7 +58,6 @@ md.renderer.rules.fence = (tokens, idx, options, env, slf) => {
               // 否则，创建新的 PerfectScrollbar 实例
               const ps = new PerfectScrollbar(pre, {
                 suppressScrollY: true,
-                useBothWheelAxes: true,
               });
               scrollbars.set(pre, ps);
             }
