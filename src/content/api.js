@@ -1,13 +1,16 @@
 import { md } from "./markdown";
 import { getAllowAutoScroll } from "./scrollControl";
 
+let conversation = [];
+
 export async function getAIResponse(
   text,
   responseElement,
   signal,
   ps,
   iconContainer,
-  aiResponseContainer
+  aiResponseContainer,
+  isRefresh = false
 ) {
   responseElement.innerHTML = "";
   let allowAutoScroll = true;
@@ -25,6 +28,11 @@ export async function getAIResponse(
   }
 
   try {
+    if(isRefresh){
+      conversation = conversation.slice(0, -1);
+    }else{
+      conversation.push({ role: "user", content: text });
+    }
     const response = await fetch("https://api.deepseek.com/chat/completions", {
       method: "POST",
       headers: {
@@ -42,7 +50,7 @@ export async function getAIResponse(
                 : `The user's preferred language is ${language}. Regardless of the input language, you must respond in ${language} from now on.`
             } Always prioritize clear and effective communication.`,
           },
-          { role: "user", content: text },
+          ...conversation,
         ],
         stream: true,
       }),
@@ -91,6 +99,7 @@ export async function getAIResponse(
         }
       }
     }
+    conversation.push({ role: "assistant", content: aiResponse });
     responseElement.appendChild(iconContainer);
     iconContainer.dataset.ready = "true";
   } catch (error) {

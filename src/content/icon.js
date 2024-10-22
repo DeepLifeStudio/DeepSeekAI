@@ -13,11 +13,10 @@ export function createIcon(x, y) {
 export function createSvgIcon(text, title) {
   const wrapper = document.createElement("div");
   wrapper.className = "icon-wrapper tooltip";
-  wrapper.style.position = "relative";
   wrapper.style.display = "inline-block";
   const icon = document.createElement("img");
-  icon.style.width = "17px";
-  icon.style.height = "17px";
+  icon.style.width = "15px";
+  icon.style.height = "15px";
   icon.src = chrome.runtime.getURL(`icons/${text}.svg`);
   icon.style.border = "none";
   icon.style.cursor = "pointer";
@@ -56,6 +55,5 @@ export function createSvgIcon(text, title) {
   wrapper.addEventListener("mouseleave", () => {
     tooltip.style.visibility = "hidden";
   });
-
   return wrapper;
 }
