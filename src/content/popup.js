@@ -12,27 +12,31 @@ export function createPopup(text, rect) {
   const aiResponseElement = document.createElement("div");
   const aiResponseContainer = document.createElement("div");
   styleResponseContainer(aiResponseContainer);
+
   aiResponseElement.id = "ai-response";
   aiResponseElement.style.padding = "10px 40px 0";
   aiResponseElement.style.fontSize = "14px";
   const initialQuestionElement = document.createElement("div");
   initialQuestionElement.className = "user-question";
   initialQuestionElement.textContent = text;
-  aiResponseElement.appendChild(initialQuestionElement);
-
+  addCopyIcon(initialQuestionElement);
   // 添加初始的 AI 回答（先显示"AI正在思考..."）
   const initialAnswerElement = document.createElement("div");
   initialAnswerElement.className = "ai-answer";
   initialAnswerElement.textContent = "AI正在思考...";
+  aiResponseElement.appendChild(initialQuestionElement);
   aiResponseElement.appendChild(initialAnswerElement);
+  addCopyIcon(initialAnswerElement);
+  addRefreshIcon(initialAnswerElement, aiResponseElement);
   aiResponseContainer.style.paddingBottom = "10px";
   const iconContainer = document.createElement("div");
   iconContainer.className = "icon-wrapper";
   Object.assign(iconContainer.style, {
     gap: "10px",
-    position: "relative",
+    position: "absolute",
     display: "none",
-    bottom: "20px",
+    bottom: "5px",
+    right:"5px"
   });
   const copyIcon = createSvgIcon("copy", "复制");
   const refreshIcon = createSvgIcon("redo", "重答");
@@ -84,6 +88,75 @@ export function createPopup(text, rect) {
     aiResponseContainer
   );
 
+  function addCopyIcon(element) {
+    const copyIcon = document.createElement("img");
+    copyIcon.src = chrome.runtime.getURL("icons/copy.svg");
+    copyIcon.style.position = "absolute";
+    copyIcon.style.top = "5px";
+    copyIcon.style.right = "5px";
+    copyIcon.style.width = "15px";
+    copyIcon.style.height = "15px";
+    copyIcon.style.cursor = "pointer";
+    copyIcon.style.display = "none"; // 初始隐藏图标
+
+    // 鼠标悬停时显示复制图标
+    element.addEventListener("mouseenter", () => {
+      copyIcon.style.display = "block";
+    });
+    element.addEventListener("mouseleave", () => {
+      copyIcon.style.display = "none";
+    });
+
+    // 点击复制图标时复制内容
+    copyIcon.addEventListener("click", () => {
+      const textToCopy = element.textContent;
+      navigator.clipboard.writeText(textToCopy);
+    });
+
+    element.style.position = "relative"; // 使图标在元素内绝对定位
+    element.appendChild(copyIcon);
+  }
+  function addRefreshIcon(answerElement, aiResponseElement) {
+    const refreshIcon = document.createElement("img");
+    refreshIcon.src = chrome.runtime.getURL("icons/redo.svg");
+    refreshIcon.style.position = "absolute";
+    refreshIcon.style.top = "5px";
+    refreshIcon.style.right = "25px"; // 和复制图标保持距离
+    refreshIcon.style.width = "15px";
+    refreshIcon.style.height = "15px";
+    refreshIcon.style.cursor = "pointer";
+    refreshIcon.style.display = "none"; // 初始隐藏图标
+
+    // 只有在最后一个 ai-answer 区域显示重答图标
+    answerElement.addEventListener("mouseenter", () => {
+      refreshIcon.style.display = "block";
+    });
+    answerElement.addEventListener("mouseleave", () => {
+      refreshIcon.style.display = "none";
+    });
+
+    // 点击重答图标时执行重答逻辑
+    refreshIcon.addEventListener("click", () => {
+      const lastUserQuestion = aiResponseElement.querySelector(
+        ".user-question:last-child"
+      );
+      if (lastUserQuestion) {
+        const questionText = lastUserQuestion.textContent;
+        answerElement.textContent = "AI正在思考...";
+        getAIResponse(
+          questionText,
+          answerElement,
+          new AbortController().signal,
+          null,
+          null,
+          true
+        );
+      }
+    });
+
+    answerElement.style.position = "relative"; // 使图标在元素内绝对定位
+    answerElement.appendChild(refreshIcon);
+  }
   refreshIcon.addEventListener("click", (event) => {
     event.stopPropagation();
     abortController.abort();
@@ -403,8 +476,8 @@ const styles = `
     border-radius: 15px;
     padding: 8px 10px;
     word-wrap: break-word;
+    position: relative;
   }
-
   .user-question{
     align-self: flex-end;
     background-color:  #007aff;
