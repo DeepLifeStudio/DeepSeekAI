@@ -6,7 +6,7 @@ import { selectionManager } from "./components/SelectionManager";
 import { popupStateManager } from './utils/popupStateManager';
 
 // Debug log
-console.log(`FloatAI: Content script injected on ${window.location.href}`);
+console.log(`DeepSeek AI: Content script injected on ${window.location.href}`);
 
 // State
 let isSelectionEnabled = true;

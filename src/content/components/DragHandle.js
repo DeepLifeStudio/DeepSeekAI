@@ -174,7 +174,7 @@ export function createDragHandle(removeCallback, minimizeCallback, pinCallback) 
     WebkitUserSelect: "none",
     pointerEvents: "none"
   });
-  textNode.textContent = "FloatAI";
+  textNode.textContent = "DeepSeek AI";
   titleContainer.appendChild(logo);
   titleContainer.appendChild(textNode);
 
@@ -189,6 +189,8 @@ export function createDragHandle(removeCallback, minimizeCallback, pinCallback) 
 
   const closeButton = document.createElement("button");
   closeButton.className = "close-button tooltip-trigger";
+  closeButton.type = "button";
+  closeButton.setAttribute("aria-label", "Close chat");
   Object.assign(closeButton.style, {
     display: "none",
     background: "none",
@@ -299,6 +301,8 @@ export function createDragHandle(removeCallback, minimizeCallback, pinCallback) 
   // 最小化按钮（在关闭按钮左侧）
   const minimizeButton = document.createElement("button");
   minimizeButton.className = "minimize-button tooltip-trigger";
+  minimizeButton.type = "button";
+  minimizeButton.setAttribute("aria-label", "Minimize chat");
   Object.assign(minimizeButton.style, {
     display: "none",
     background: "none",
@@ -389,6 +393,8 @@ export function createDragHandle(removeCallback, minimizeCallback, pinCallback) 
 
   const copyButton = document.createElement("button");
   copyButton.className = "copy-all-button tooltip-trigger";
+  copyButton.type = "button";
+  copyButton.setAttribute("aria-label", "Copy conversation");
   Object.assign(copyButton.style, {
     display: "none",
     background: "none",
@@ -539,6 +545,8 @@ export function createDragHandle(removeCallback, minimizeCallback, pinCallback) 
   // 固定按钮（在最小化按钮左侧）
   const pinButton = document.createElement("button");
   pinButton.className = "pin-button tooltip-trigger";
+  pinButton.type = "button";
+  pinButton.setAttribute("aria-label", "Pin chat");
   Object.assign(pinButton.style, {
     display: "none",
     background: "none",
@@ -670,15 +678,6 @@ export function createDragHandle(removeCallback, minimizeCallback, pinCallback) 
   dragHandle.appendChild(minimizeButton);
   dragHandle.appendChild(pinButton);
   dragHandle.appendChild(copyButton);
-
-  // 添加徽标，表示扩展的身份
-  dragHandle.addEventListener("dblclick", (e) => {
-    e.stopPropagation();
-    if (removeCallback) {
-      // 双击标题栏也可以关闭
-      removeCallback();
-    }
-  });
 
   return dragHandle;
 }

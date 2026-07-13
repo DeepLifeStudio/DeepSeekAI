@@ -581,32 +581,16 @@ function handleError(status, responseElement, errorInfo, onGenerationError) {
   isGenerating = false;
   renderQueue = [];
 
-  // 优先使用API返回的原始错误信息
-  let errorMessage = "Failed to connect to AI service.";
-
-  if (errorInfo && typeof errorInfo === 'object') {
-    // 如果有API返回的详细错误信息，优先使用
-    if (errorInfo.message) {
-      errorMessage = errorInfo.message;
-    } else if (errorInfo.error && errorInfo.error.message) {
-      errorMessage = errorInfo.error.message;
-    } else if (typeof errorInfo.error === 'string') {
-      errorMessage = errorInfo.error;
-    }
-  } else if (errorInfo && typeof errorInfo === 'string') {
-    // 如果错误信息是字符串，直接使用
-    errorMessage = errorInfo;
-  } else {
-    // 只有在没有原始错误信息时才使用基于状态码的通用消息
-    if (status === 401) {
-      errorMessage = "API key is invalid or expired.";
-    } else if (status === 429) {
-      errorMessage = "Too many requests. Please slow down.";
-    } else if (status === 500) {
-      errorMessage = "AI service internal error. Please try again later.";
-    } else if (status === 0) {
-      errorMessage = "The request was cancelled or timed out.";
-    }
+  // Keep provider-specific details out of the conversation and tell the user what to do next.
+  let errorMessage = "The request failed. Check your settings and try again.";
+  if (status === 401) {
+    errorMessage = "Your API key is invalid or expired. Open settings to update it.";
+  } else if (status === 429) {
+    errorMessage = "Too many requests. Wait a moment and try again.";
+  } else if (status >= 500) {
+    errorMessage = "The AI service is unavailable. Try again in a moment.";
+  } else if (status === 0) {
+    errorMessage = "The request timed out. Check your connection and try again.";
   }
 
   responseElement.textContent = errorMessage;

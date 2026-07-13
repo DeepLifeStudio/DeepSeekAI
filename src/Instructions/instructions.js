@@ -1,6 +1,6 @@
 const translations = {
   zh: {
-    title: "FloatAI 使用方式",
+    title: "DeepSeek AI 使用方式",
     subtitle: "让 AI 助手为您的网页浏览体验增添智慧",
     quickStart: "快速开始",
     chromeInstall: "Chrome 商店安装",
@@ -16,7 +16,7 @@ const translations = {
     github: "GitHub 仓库",
     githubDesc: "查看源代码和提交建议",
     installationSteps: [
-      "在浏览器中安装 FloatAI 扩展",
+      "在浏览器中安装 DeepSeek AI 扩展",
       "点击工具栏中的扩展图标",
       "输入您的 DeepSeek API 密钥",
       "选择您偏好的回答语言（强制模型根据设定的语言进行回答）",
@@ -31,7 +31,7 @@ const translations = {
     shortcutUsageDesc:
       "扩展提供了三种可自定义的快捷键，无论是否选中文本都可使用，可在浏览器的扩展设置中修改：",
     shortcutKey1: "激活扩展程序",
-    shortcutKey1Desc: "快速激活 FloatAI 扩展",
+    shortcutKey1Desc: "快速激活 DeepSeek AI 扩展",
     shortcutKey2: "显示/隐藏对话窗口",
     shortcutKey2Desc: "切换对话窗口的显示状态（保留当前会话内容，无论是否选中文本都可使用）",
     shortcutKey3: "打开/关闭对话窗口",
@@ -59,15 +59,15 @@ const translations = {
     tip3: "💡 如果对 AI 的回答不满意，可以点击重新生成按钮获取新的答案",
     feedback: "反馈与支持",
     feedbackDesc:
-      "如果您喜欢 FloatAI 扩展，欢迎在 Chrome 网上应用商店评分和评论，期待您的反馈！",
+      "如果您喜欢 DeepSeek AI 扩展，欢迎在 Chrome 网上应用商店评分和评论，期待您的反馈！",
     chromeFeedback: "前往 Chrome 商店",
-    chromeFeedbackDesc: "为 FloatAI 评分和评论",
+    chromeFeedbackDesc: "为 DeepSeek AI 评分和评论",
     privacy: "隐私说明",
     privacyDesc:
-      "重视您的隐私。FloatAI 扩展只会在必要时发送您选中的文本到 API，不会收集或存储任何其他个人信息。您的 API 密钥仅保存在本地浏览器中。",
+      "重视您的隐私。DeepSeek AI 扩展只会在必要时发送您选中的文本到 API，不会收集或存储任何其他个人信息。您的 API 密钥仅保存在本地浏览器中。",
   },
   en: {
-    title: "FloatAI Usage Guide",
+    title: "DeepSeek AI Usage Guide",
     subtitle: "Enhance your web browsing experience with AI assistance",
     quickStart: "Quick Start",
     chromeInstall: "Install from Chrome Web Store",
@@ -83,7 +83,7 @@ const translations = {
     github: "GitHub Repository",
     githubDesc: "View source code and submit suggestions",
     installationSteps: [
-      "Install the FloatAI extension in your browser",
+      "Install the DeepSeek AI extension in your browser",
       "Click the extension icon in the toolbar",
       "Enter your DeepSeek API key",
       "Select your preferred response language (force the model to respond in the set language)",
@@ -98,7 +98,7 @@ const translations = {
     shortcutUsageDesc:
       "The extension provides three customizable shortcuts that work regardless of whether text is selected, and can be modified in your browser's extension settings:",
     shortcutKey1: "Activate Extension",
-    shortcutKey1Desc: "Quickly activate the FloatAI extension",
+    shortcutKey1Desc: "Quickly activate the DeepSeek AI extension",
     shortcutKey2: "Show/Hide Chat Window",
     shortcutKey2Desc: "Toggle the chat window visibility (preserves current session, works regardless of text selection)",
     shortcutKey3: "Open/Close Chat Window",
@@ -126,12 +126,12 @@ const translations = {
     tip3: "💡 If you're not satisfied with the AI's response, click the regenerate button to get a new answer.",
     feedback: "Feedback & Support",
     feedbackDesc:
-      "If you like the FloatAI extension, please rate and review it on the Chrome Web Store. We look forward to your feedback!",
+      "If you like the DeepSeek AI extension, please rate and review it on the Chrome Web Store. We look forward to your feedback!",
     chromeFeedback: "Visit Chrome Web Store",
-    chromeFeedbackDesc: "Rate and review FloatAI",
+    chromeFeedbackDesc: "Rate and review DeepSeek AI",
     privacy: "Privacy Policy",
     privacyDesc:
-      "We value your privacy. The FloatAI extension only sends selected text to the API when necessary and does not collect or store any other personal information. Your API key is stored locally in your browser.",
+      "We value your privacy. The DeepSeek AI extension only sends selected text to the API when necessary and does not collect or store any other personal information. Your API key is stored locally in your browser.",
   },
 };
 
@@ -285,8 +285,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Check for file access hash
   if (window.location.hash === '#file-access') {
-    const cnMsg = "请在扩展管理页面中启用“允许访问文件网址”权限，以便在本地文件中使用 FloatAI。";
-    const enMsg = "Please enable 'Allow access to file URLs' in the extension management page to use FloatAI with local files.";
+    const cnMsg = "请在扩展管理页面中启用“允许访问文件网址”权限，以便在本地文件中使用 DeepSeek AI。";
+    const enMsg = "Please enable 'Allow access to file URLs' in the extension management page to use DeepSeek AI with local files.";
     // Simple alert for immediate attention. A custom modal would be better but this is effective and simple.
     // Using setTimeout to ensure the page renders first
     setTimeout(() => {

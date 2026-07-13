@@ -314,7 +314,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.create({
     id: "createPopup",
-    title: "FloatAI",
+    title: "DeepSeek AI",
     contexts: ["selection"],
   });
 });
@@ -370,7 +370,7 @@ chrome.commands.onCommand.addListener(async (command) => {
         selectedText: result,
         useGreeting: getGreeting()
       }).catch(err => {
-         console.error("FloatAI: Failed to send toggleChat message. Is content script running?", err);
+         console.error("DeepSeek AI: Failed to send toggleChat message. Is content script running?", err);
       });
     } catch (error) {
       console.error("获取选中文本出错:", error);
@@ -378,7 +378,7 @@ chrome.commands.onCommand.addListener(async (command) => {
         action: "toggleChat",
         selectedText: "",
         useGreeting: getGreeting()
-      }).catch(err => console.error("FloatAI: Failed to send fallback message:", err));
+      }).catch(err => console.error("DeepSeek AI: Failed to send fallback message:", err));
     }
   } else if (command === "show-hide-chat") {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -418,7 +418,7 @@ chrome.commands.onCommand.addListener(async (command) => {
         selectedText: result,
         useGreeting: getGreeting()
       }).catch(err => {
-         console.error("FloatAI: Failed to send showHideChat message. Is content script running?", err);
+         console.error("DeepSeek AI: Failed to send showHideChat message. Is content script running?", err);
       });
     } catch (error) {
       console.error("获取选中文本出错:", error);
@@ -426,7 +426,7 @@ chrome.commands.onCommand.addListener(async (command) => {
         action: "showHideChat",
         selectedText: "",
         useGreeting: getGreeting()
-      }).catch(err => console.error("FloatAI: Failed to send fallback message:", err));
+      }).catch(err => console.error("DeepSeek AI: Failed to send fallback message:", err));
     }
   } else if (command === "close-chat") {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -437,7 +437,7 @@ chrome.commands.onCommand.addListener(async (command) => {
     chrome.tabs.sendMessage(tab.id, {
       action: "closeChat"
     }).catch(err => {
-       console.error("FloatAI: Failed to send closeChat message:", err);
+       console.error("DeepSeek AI: Failed to send closeChat message:", err);
     });
   }
 });

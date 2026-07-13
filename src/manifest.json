@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "FloatAI - Floating AI Chat",
+  "name": "DeepSeek AI - Floating AI Chat",
   "description": "Floating AI chat workspace. Bring your own key — supports DeepSeek and any OpenAI-compatible API. Not affiliated with DeepSeek.",
-  "version": "3.4.1",
+  "version": "3.4.3",
   "permissions": ["storage", "contextMenus", "scripting", "commands", "tabs"],
   "content_scripts": [
     {

@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FloatAI</title>
+    <title>DeepSeek AI</title>
     <style>
       :root {
         /* 亮色模式变量 - 优化苹果风格色彩 */
@@ -950,6 +950,9 @@
       }
 
       .close {
+        background: transparent;
+        border: none;
+        padding: 0;
         cursor: pointer;
         font-size: 24px;
         line-height: 18px;
@@ -1757,7 +1760,7 @@
     <div class="container">
       <div class="header">
         <img src="../icons/icon32.png" alt="Extension logo" />
-        <span id="header-title">FloatAI</span>
+        <span id="header-title">DeepSeek AI</span>
       </div>
 
       <div class="key">
@@ -2056,7 +2059,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <span id="customProviderTitle">添加服务商</span>
-          <span id="closeCustomProviderModal" class="close">&times;</span>
+          <button type="button" id="closeCustomProviderModal" class="close" aria-label="关闭">&times;</button>
         </div>
         <div class="modal-body">
           <div class="form-group" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
@@ -2141,7 +2144,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <span id="addModelTitle">添加模型</span>
-          <span id="closeModelModal" class="close">&times;</span>
+          <button type="button" id="closeModelModal" class="close" aria-label="关闭">&times;</button>
         </div>
         <div class="modal-body">
           <div class="form-group" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
@@ -2194,7 +2197,7 @@
       <div class="modal-content model-picker-modal-content">
         <div class="modal-header">
           <span id="modelPickerTitle">Choose Model</span>
-          <span id="closeModelPickerModal" class="close">&times;</span>
+          <button type="button" id="closeModelPickerModal" class="close" aria-label="关闭">&times;</button>
         </div>
         <div class="modal-body model-picker-modal-body">
           <input
@@ -2221,7 +2224,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <span id="deleteProviderTitle">删除服务商</span>
-          <span id="closeDeleteProviderModal" class="close">&times;</span>
+          <button type="button" id="closeDeleteProviderModal" class="close" aria-label="关闭">&times;</button>
         </div>
         <div class="modal-body">
           <p id="deleteProviderConfirmText">
@@ -2248,7 +2251,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <span id="deleteModelTitle">删除模型</span>
-          <span id="closeDeleteModelModal" class="close">&times;</span>
+          <button type="button" id="closeDeleteModelModal" class="close" aria-label="关闭">&times;</button>
         </div>
         <div class="modal-body">
           <p id="deleteModelConfirmText">

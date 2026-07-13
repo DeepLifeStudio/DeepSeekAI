@@ -6,7 +6,7 @@ const QUICK_ACTIONS = [
   {
     id: "logo",
     icon: "icon24",
-    title: "FloatAI",
+    title: "DeepSeek AI",
   },
   {
     id: "main",
@@ -326,6 +326,15 @@ export async function createQuickActionButtons(
 
     .quick-action-button:active {
       background: rgba(255, 255, 255, 0.2);
+    }
+
+    .quick-action-button:focus-visible,
+    .input-trigger:focus-visible,
+    .language-option:focus-visible,
+    .cancel-btn:focus-visible,
+    .send-btn:focus-visible {
+      outline: 2px solid currentColor;
+      outline-offset: 2px;
     }
 
     .quick-action-button .icon-wrapper {
@@ -707,6 +716,8 @@ export async function createQuickActionButtons(
   const appendActionButton = (action, onClick) => {
     const btn = document.createElement("button");
     btn.className = "quick-action-button";
+    btn.type = "button";
+    btn.setAttribute("aria-label", action.title);
 
     // Create icon
     const iconWrapper = createSvgIcon(action.icon, action.title);
@@ -736,21 +747,34 @@ export async function createQuickActionButtons(
 
         const btn = document.createElement("button");
         btn.className = "quick-action-button";
+        btn.type = "button";
+        btn.setAttribute("aria-label", "Choose translation language");
+        btn.setAttribute("aria-haspopup", "menu");
+        btn.setAttribute("aria-expanded", "false");
         btn.appendChild(createSvgIcon(action.icon, action.title));
 
         const menu = document.createElement("div");
         menu.className = "language-select";
+        menu.setAttribute("role", "menu");
+
+        let menuOpen = false;
+        const setMenuOpen = (open) => {
+            menuOpen = open;
+            menu.style.display = open ? "block" : "none";
+            btn.setAttribute("aria-expanded", String(open));
+        };
 
         btn.onclick = (e) => {
             e.preventDefault();
             e.stopPropagation();
-            closeQAB();
-            handleActionClick(action, selectedText);
+            setMenuOpen(!menuOpen);
         };
 
         action.languages.forEach(lang => {
              const option = document.createElement("button");
              option.className = "language-option";
+             option.type = "button";
+             option.setAttribute("role", "menuitem");
              option.textContent = lang.native;
              if (lang.native === lastLanguage) {
                  option.style.fontWeight = "600";
@@ -761,6 +785,7 @@ export async function createQuickActionButtons(
                   e.stopPropagation();
                   await chrome.storage.sync.set({ lastLanguage: lang.native });
                    action.prompt = `Act as an AI assistant with MBTI persona ISTJ-INFJ, functioning as a professional multilingual translation engine that provides the ${lang.native} version of user-given content while preserving the original format (such as poetry, code, glossaries). If no target language is specified, ask proactively. The translation MUST be accurate and natural in ${lang.native}. Output only the translated text directly without any additional explanation or clarification.`;
+                  setMenuOpen(false);
                   closeQAB();
                   handleActionClick(action, selectedText);
              };
@@ -768,8 +793,8 @@ export async function createQuickActionButtons(
         });
 
        let hideTimeout;
-       const showMenu = () => { clearTimeout(hideTimeout); menu.style.display = "block"; };
-       const hideMenu = () => { hideTimeout = setTimeout(() => menu.style.display = "none", 200); };
+       const showMenu = () => { clearTimeout(hideTimeout); setMenuOpen(true); };
+       const hideMenu = () => { hideTimeout = setTimeout(() => setMenuOpen(false), 200); };
 
        wrapper.appendChild(btn);
        wrapper.appendChild(menu);
@@ -818,7 +843,7 @@ export async function createQuickActionButtons(
 
 	  const textarea = document.createElement("textarea");
 	  textarea.className = "expanded-textarea";
-	  textarea.placeholder = "Ask FloatAI...";
+		  textarea.placeholder = "Ask DeepSeek AI...";
 
 	  const resizeExpandedTextarea = () => {
 	      // Auto-resize to fit content while keeping a compact default height.
