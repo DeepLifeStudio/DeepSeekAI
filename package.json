@@ -1,6 +1,6 @@
 {
   "name": "ai-assistant",
-  "version": "3.4.5",
+  "version": "3.4.6",
   "description": "DeepSeek AI - Floating AI Chat. A free and open-source browser extension. Supports DeepSeek and any OpenAI-compatible API.",
   "main": "index.js",
   "scripts": {
