@@ -186,7 +186,31 @@ window.updateContent = () => {
 const getCurrentLang = () => localStorage.getItem('preferredLang') || 'en';
 
 // 设置当前语言
-const setCurrentLang = (lang) => localStorage.setItem('preferredLang', lang);
+const setCurrentLang = (lang) => {
+  localStorage.setItem('preferredLang', lang);
+  chrome.storage.sync.set({ interfaceLanguage: lang });
+};
+
+const updateInterfaceLanguageControl = () => {
+  const currentLang = getCurrentLang();
+  const valueElement = document.getElementById('interfaceLanguageValue');
+  const toggleButton = document.getElementById('language-toggle');
+
+  if (valueElement) {
+    valueElement.textContent = currentLang === 'zh' ? '中文' : 'English';
+  }
+  if (toggleButton) {
+    toggleButton.setAttribute(
+      'aria-label',
+      currentLang === 'zh' ? '切换界面语言' : 'Switch interface language'
+    );
+  }
+  document.documentElement.lang = currentLang === 'zh' ? 'zh-CN' : 'en';
+};
+
+// Keep the content-script error language aligned with the popup UI language.
+chrome.storage.sync.set({ interfaceLanguage: getCurrentLang() });
+updateInterfaceLanguageControl();
 
 // 语言切换按钮事件
 document.getElementById('language-toggle')?.addEventListener('click', () => {
@@ -205,6 +229,7 @@ document.getElementById('language-toggle')?.addEventListener('click', () => {
   const currentLang = getCurrentLang();
   const newLang = currentLang === 'zh' ? 'en' : 'zh';
   setCurrentLang(newLang);
+  updateInterfaceLanguageControl();
 
   // 更新UI文本
   if (popupManager && popupManager.i18nManager) {

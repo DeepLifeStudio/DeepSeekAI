@@ -443,59 +443,30 @@ export function initMouseHandlers(isSelectionEnabledGetter) {
       // Hack for right click focus preservation (skipped for now or simplified)
   }, { capture: true, passive: false });
 
-
-  // Global click for Shadow DOM closing
-  document.addEventListener('mousedown', async (event) => {
-    if (!popupManager.currentPopup) return;
-    const isTempPinned = popupManager.currentPopup._isTempPinned || false;
-    if (isTempPinned) return;
-
-    const shadowHost = document.getElementById('deepseek-shadow-host');
-    if (shadowHost && (event.target === shadowHost || shadowHost.contains(event.target))) {
-        return;
-    }
+  // 点击聊天窗口外部时收起窗口，但保留完整会话。
+  // 使用 click 阶段，避免网页自身的 mousedown/选区处理打断恢复图标创建。
+  document.addEventListener('click', (event) => {
+    const currentPopup = popupManager.currentPopup;
+    if (!currentPopup || popupStateManager.isMinimized()) return;
+    if (currentPopup._isTempPinned) return;
 
     const composedPath = event.composedPath ? event.composedPath() : [];
-    const isClickInShadow = composedPath.some(el => {
-        if (el.id === 'ai-popup') return true;
-        if (el.id === 'deepseek-shadow-host') return true;
-        if (el.classList && (
-          el.classList.contains('icon-wrapper') ||
-          el.classList.contains('icon-container') ||
-          el.classList.contains('regenerate-icon')
-        )) return true;
-        return false;
-    });
+    if (composedPath.includes(currentPopup)) return;
 
-    if (isClickInShadow) return;
+    const shadowHost = document.getElementById('deepseek-shadow-host');
+    if (event.target === shadowHost) return;
 
-    const isClickInside = event.target.closest('#ai-popup') ||
-                         event.target.closest('.icon-wrapper') ||
-                         event.target.closest('.icon-container') ||
-                         event.target.closest('.regenerate-icon');
-
-    if (isClickInside) return;
-
-    popupManager.safeRemovePopup();
+    popupManager.minimizePopup();
   });
+
 
   // Short cuts
   document.addEventListener('keydown', (e) => {
     if (!popupManager.currentPopup) return;
-    if (e.key === 'Escape') {
-        popupManager.safeRemovePopup();
+    if (e.key === 'Escape' && !e.defaultPrevented && !popupStateManager.isMinimized()) {
+        e.preventDefault();
+        popupManager.minimizePopup();
     }
-  });
-
-  // Global click to close language select
-  document.addEventListener('click', (e) => {
-      const languageSelect = document.querySelector('.language-select');
-      if (languageSelect && languageSelect.style.display === 'block') {
-          const isClickInside = e.target.closest('.quick-action-translate');
-          if (!isClickInside) {
-              languageSelect.style.display = 'none';
-          }
-      }
   });
 
   // Close QD on outside click

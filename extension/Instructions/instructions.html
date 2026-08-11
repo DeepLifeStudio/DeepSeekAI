@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DeepSeek AI User Guide</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        --text-primary: #1d1d1f;
+        --text-secondary: #86868b;
+        --background-primary: #ffffff;
+        --background-secondary: #f5f5f7;
+        --card-background: rgba(255, 255, 255, 0.8);
+        --accent-color: #0071e3;
+        --accent-hover: #0077ed;
+        --border-color: rgba(0, 0, 0, 0.1);
+        --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+        --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.08);
+        --radius-lg: 20px;
+        --radius-md: 16px;
+        --font-stack: "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --text-primary: #f5f5f7;
+          --text-secondary: #a1a1a6;
+          --background-primary: #000000;
+          --background-secondary: #1c1c1e;
+          --card-background: rgba(28, 28, 30, 0.8);
+          --border-color: rgba(255, 255, 255, 0.1);
+          --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
+          --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4);
+        }
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: var(--font-stack);
+        line-height: 1.6;
+        margin: 0;
+        padding: 0;
+        color: var(--text-primary);
+        background-color: var(--background-primary);
+        -webkit-font-smoothing: antialiased;
+        transition: background-color 0.3s ease, color 0.3s ease;
+      }
+
+      .container {
+        max-width: 980px;
+        margin: 0 auto;
+        padding: 60px 20px;
+      }
+
+      /* Header / Hero */
+      .hero {
+        text-align: center;
+        margin-bottom: 80px;
+        animation: fadeIn 0.8s ease-out;
+      }
+
+      h1 {
+        font-size: 56px;
+        font-weight: 700;
+        margin-bottom: 16px;
+        letter-spacing: -0.02em;
+        background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .subtitle {
+        font-size: 24px;
+        color: var(--text-secondary);
+        font-weight: 400;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      /* Sections */
+      section {
+        margin-bottom: 80px;
+        animation: slideUp 0.8s ease-out forwards;
+        opacity: 0;
+      }
+
+      section:nth-child(2) { animation-delay: 0.1s; }
+      section:nth-child(3) { animation-delay: 0.2s; }
+      section:nth-child(4) { animation-delay: 0.3s; }
+      section:nth-child(5) { animation-delay: 0.4s; }
+
+      h2 {
+        font-size: 32px;
+        font-weight: 600;
+        margin-bottom: 40px;
+        letter-spacing: -0.01em;
+        text-align: center;
+      }
+
+      /* Cards Grid */
+      .grid {
+        display: grid;
+        gap: 24px;
+      }
+
+      .grid-3 {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      }
+
+      .grid-2 {
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      }
+
+      .card {
+        background: var(--card-background);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-radius: var(--radius-lg);
+        padding: 32px;
+        border: 1px solid var(--border-color);
+        transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+      }
+
+      .card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-md);
+      }
+
+      .card h3 {
+        font-size: 20px;
+        font-weight: 600;
+        margin: 0 0 12px 0;
+        color: var(--text-primary);
+      }
+
+      .card p {
+        font-size: 15px;
+        color: var(--text-secondary);
+        margin: 0;
+        flex-grow: 1;
+      }
+
+      /* Links as Cards */
+      a.card {
+        text-decoration: none;
+        color: inherit;
+      }
+
+      a.card h3 {
+        color: var(--accent-color);
+      }
+
+      /* Installation Steps */
+      .steps-container {
+        background: var(--background-secondary);
+        border-radius: var(--radius-lg);
+        padding: 40px;
+        counter-reset: step-counter;
+      }
+
+      .step-item {
+        display: flex;
+        margin-bottom: 24px;
+        position: relative;
+      }
+
+      .step-item:last-child {
+        margin-bottom: 0;
+      }
+
+      .step-item::before {
+        counter-increment: step-counter;
+        content: counter(step-counter);
+        width: 32px;
+        height: 32px;
+        background: var(--accent-color);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 14px;
+        margin-right: 20px;
+        flex-shrink: 0;
+      }
+
+      .step-content {
+        padding-top: 2px;
+        font-size: 16px;
+        color: var(--text-primary);
+      }
+
+      /* Tips */
+      .tip-container {
+        background: rgba(0, 113, 227, 0.1);
+        border-radius: var(--radius-md);
+        padding: 20px;
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+        margin-top: 24px;
+      }
+
+      .tip-icon {
+        font-size: 20px;
+      }
+
+      .tip-text {
+        font-size: 15px;
+        color: var(--text-primary);
+        margin: 0;
+      }
+
+      /* Language Toggle */
+      .language-toggle {
+        position: fixed;
+        top: 24px;
+        right: 24px;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--card-background);
+        backdrop-filter: blur(10px);
+        border: 1px solid var(--border-color);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+        z-index: 100;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .language-toggle:hover {
+        transform: scale(1.05);
+        background: var(--background-secondary);
+      }
+
+      .language-toggle svg {
+        width: 20px;
+        height: 20px;
+        fill: var(--text-primary);
+      }
+
+      /* Animations */
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .container {
+          padding: 40px 20px;
+        }
+
+        h1 {
+          font-size: 40px;
+        }
+
+        h2 {
+          font-size: 28px;
+        }
+
+        .grid-2, .grid-3 {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <button class="language-toggle" id="language-toggle" aria-label="Toggle Language">
+      <svg viewBox="0 0 24 24">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+      </svg>
+    </button>
+
+    <div class="container">
+      <div class="hero">
+        <h1 id="title">DeepSeek AI User Guide</h1>
+        <p class="subtitle" id="subtitle">Let AI Assistant Enhance Your Web Browsing Experience</p>
+      </div>
+
+      <section>
+        <h2 id="quick-start">Quick Start</h2>
+        <div class="grid grid-3">
+          <a href="https://chromewebstore.google.com/detail/deepseek-ai/bjjobdlpgglckcmhgmmecijpfobmcpap" class="card" target="_blank">
+            <h3 id="chrome-install">Chrome Store</h3>
+            <p id="chrome-desc">Install the extension from the Chrome Web Store</p>
+          </a>
+          <a href="https://chromewebstore.google.com/detail/deepseek-ai/bjjobdlpgglckcmhgmmecijpfobmcpap" class="card" target="_blank">
+            <h3 id="edge-install">Edge Store</h3>
+            <p id="edge-desc">Install the extension from the Edge Web Store</p>
+          </a>
+          <a href="https://platform.deepseek.com/api_keys" class="card" target="_blank">
+            <h3 id="api-key">Get API Key</h3>
+            <p id="api-desc">Get Your API Key on the DeepSeek Platform</p>
+          </a>
+        </div>
+
+        <div class="steps-container" style="margin-top: 40px;">
+          <div id="installation-steps-container">
+            <!-- Steps will be injected by JS -->
+            <div class="step-item"><div class="step-content">Install DeepSeek AI Extension in Your Browser</div></div>
+            <div class="step-item"><div class="step-content">Click the Extension Icon in the Toolbar</div></div>
+            <div class="step-item"><div class="step-content">Enter Your DeepSeek API Key</div></div>
+            <div class="step-item"><div class="step-content">Select your preferred response language</div></div>
+            <div class="step-item"><div class="step-content">Enable the Quick Button feature</div></div>
+            <div class="step-item"><div class="step-content">Set your preferred shortcut keys</div></div>
+            <div class="step-item"><div class="step-content">Select text on the webpage to start a conversation!</div></div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 id="features">Features</h2>
+        <div class="grid grid-3">
+          <div class="card">
+            <h3 id="smart-chat">Smart Chat</h3>
+            <p id="smart-chat-1">• Supports Multi-turn Dialogues</p>
+            <p id="smart-chat-2">• Real-time Streaming Response</p>
+            <p id="smart-chat-3">• Supports Regenerating Answers</p>
+          </div>
+          <div class="card">
+            <h3 id="ui-interaction">UI Interaction</h3>
+            <p id="ui-interaction-1">• Draggable Window</p>
+            <p id="ui-interaction-2">• Markdown Support</p>
+            <p id="ui-interaction-3">• LaTeX Math Rendering</p>
+            <p id="ui-interaction-4">• One-click Copy</p>
+          </div>
+          <div class="card">
+            <h3 id="personalization">Personalization</h3>
+            <p id="personalization-1">• Custom Language Preference</p>
+            <p id="personalization-2">• Dark Mode Auto Adaptation</p>
+            <p id="personalization-3">• Configurable Shortcuts</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 id="usage">Usage Guide</h2>
+        <div class="grid grid-2">
+          <div class="card">
+            <h3 id="quick-button">Quick Button</h3>
+            <p id="quick-button-desc">
+              After enabling the quick button, a toolbar automatically appears when you select text, giving you instant access to AI features.
+            </p>
+          </div>
+          <div class="card">
+            <h3 id="shortcut-usage">Shortcuts</h3>
+            <p id="shortcut-usage-desc" style="margin-bottom: 16px;">
+              Customizable shortcuts that work anywhere:
+            </p>
+            <div style="font-size: 14px;">
+              <div style="margin-bottom: 12px;">
+                <strong id="shortcut-key-1">Activate Extension</strong>
+                <div id="shortcut-key-1-desc" style="color: var(--text-secondary);">Quickly activate DeepSeek AI</div>
+              </div>
+              <div style="margin-bottom: 12px;">
+                <strong id="shortcut-key-2">Show/Hide Chat</strong>
+                <div id="shortcut-key-2-desc" style="color: var(--text-secondary);">Toggle visibility (preserves session)</div>
+              </div>
+              <div>
+                <strong id="shortcut-key-3">Open/Close Chat</strong>
+                <div id="shortcut-key-3-desc" style="color: var(--text-secondary);">Open or close (clears session)</div>
+              </div>
+            </div>
+            <div class="tip-container" style="margin-top: 20px; background: var(--background-secondary);">
+              <span class="tip-icon">💡</span>
+              <p class="tip-text">
+                <span id="shortcut-custom-tip-prefix">Customize at</span>
+                <a href="#" id="shortcuts-settings-link" style="color: var(--accent-color); text-decoration: none; font-weight: 600;">chrome://extensions/shortcuts</a>
+                <span id="shortcut-custom-tip-suffix"></span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 id="feedback">Support</h2>
+        <div class="card" style="text-align: center; align-items: center;">
+          <p id="feedback-desc" style="max-width: 600px; margin-bottom: 24px;">
+            If you like the DeepSeek AI extension, please rate and review it on the Chrome Web Store. We look forward to your feedback!
+          </p>
+          <div class="grid grid-2" style="width: 100%; gap: 16px;">
+            <a href="https://chromewebstore.google.com/detail/deepseek-ai/bjjobdlpgglckcmhgmmecijpfobmcpap" class="card" target="_blank" style="background: var(--background-secondary); border: none;">
+              <h3 id="chrome-feedback">Chrome Store</h3>
+              <p id="chrome-feedback-desc">Rate and Review</p>
+            </a>
+            <a href="https://github.com/DeepLifeStudio/DeepSeekAI" class="card" target="_blank" style="background: var(--background-secondary); border: none;">
+              <h3 id="github">GitHub</h3>
+              <p id="github-desc">Source Code & Suggestions</p>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section style="text-align: center; margin-bottom: 40px;">
+        <h2 id="privacy" style="font-size: 24px; margin-bottom: 20px;">Privacy</h2>
+        <p id="privacy-desc" style="max-width: 700px; margin: 0 auto; color: var(--text-secondary);">
+          We value your privacy. DeepSeek AI extension will only send the text you select to API when necessary, and will not collect or store any other personal information. Your API key is only stored in the local browser.
+        </p>
+      </section>
+
+      <!-- Hidden links for JS compatibility if needed -->
+      <a href="#" id="shortcuts-link" style="display: none;"></a>
+      <a href="https://chat.deepseek.com/" id="deepseek-website" style="display: none;"></a>
+      <p id="deepseek-desc" style="display: none;"></p>
+      <div id="tips" style="display: none;"></div>
+      <div id="tip-1" style="display: none;"></div>
+      <div id="tip-2" style="display: none;"></div>
+      <div id="tip-3" style="display: none;"></div>
+    </div>
+    <script src="instructions.js"></script>
+  </body>
+</html>

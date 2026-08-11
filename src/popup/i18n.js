@@ -67,7 +67,8 @@ export class I18nManager {
         apiKeyLink: '获取API密钥',
         modelLabel: '模型',
         selectionEnabledLabel: '快速按钮',
-        preferredLanguageLabel: '首选语言',
+        preferredLanguageLabel: '回答语言',
+        interfaceLanguageLabel: '界面语言',
         pinWindowLabel: '固定窗口',
         shortcutSettingsText: '快捷键设置',
         shortcutDescription: '请前往设置快捷键',
@@ -171,7 +172,8 @@ export class I18nManager {
         apiKeyLink: 'Get API Key',
         modelLabel: 'Model',
         selectionEnabledLabel: 'Quick Button',
-        preferredLanguageLabel: 'Preferred Language',
+        preferredLanguageLabel: 'Response Language',
+        interfaceLanguageLabel: 'Interface Language',
         pinWindowLabel: 'Pin Window',
         shortcutSettingsText: 'Shortcut Settings',
         shortcutDescription: 'Please go to set shortcuts',
@@ -250,6 +252,7 @@ export class I18nManager {
       // 更新其他设置标签
       this.updateElementText('selectionEnabledLabel', 'selectionEnabledLabel');
       this.updateElementText('preferredLanguageLabel', 'preferredLanguageLabel');
+      this.updateElementText('interfaceLanguageLabel', 'interfaceLanguageLabel');
       this.updateElementText('rememberWindowSizeLabel', 'rememberWindowSize');
       this.updateElementText('pinWindowLabel', 'pinWindowLabel');
       this.updateElementText('customSystemPromptLabel', 'customSystemPromptLabel');

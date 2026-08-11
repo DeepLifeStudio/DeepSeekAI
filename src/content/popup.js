@@ -229,6 +229,12 @@ export function createPopup(selectedText, rect, hideQuestion = false, removeCall
     // 提供关闭前的触觉反馈
     provideTactileFeedback(10);
 
+    // 生成过程中优先保留会话，避免误触关闭导致回答和上下文丢失。
+    if (getIsGenerating() && typeof minimizeCallback === 'function') {
+      minimizeCallback();
+      return;
+    }
+
     // 立即调用关闭回调，不使用动画或延迟
     if (removeCallback) removeCallback();
   };
@@ -284,7 +290,7 @@ export function createPopup(selectedText, rect, hideQuestion = false, removeCall
     onGenerationError     // 新增错误回调
   );
 
-  // 固定回调函数（仅对当前窗口有效）
+  // 固定后，点击网页外部不会自动收起当前会话。
   const pinCallback = (isPinned) => {
     popup._isTempPinned = isPinned;
   };

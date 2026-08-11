@@ -11,37 +11,14 @@ export class EventManager {
       () => this.managers.uiManager.toggleApiKeyVisibility()
     );
 
-    // API Key focus event - 确保在输入时可见
-    this.managers.uiManager.elements.apiKeyInput.addEventListener(
-      "focus",
-      () => {
-        // 确保当获得焦点时内容可见
-        this.managers.uiManager.elements.apiKeyInput.type = "text";
-        this.managers.uiManager.elements.iconSwitch.src = "../icons/hiddle.svg";
-      }
-    );
-
     // API Key validation and hiding on blur
     this.managers.uiManager.elements.apiKeyInput.addEventListener(
       "blur",
       () => {
-        // 当有内容时，失去焦点时隐藏内容
-        if (this.managers.uiManager.getApiKeyValue()) {
-          this.managers.uiManager.elements.apiKeyInput.type = "password";
-          this.managers.uiManager.elements.iconSwitch.src = "../icons/show.svg";
-        }
+        this.managers.uiManager.elements.apiKeyInput.type = "password";
+        this.managers.uiManager.elements.iconSwitch.src = "../icons/show.svg";
         // 执行API验证
         this.managers.apiKeyManager.handleApiKeyValidation();
-      }
-    );
-
-    // API Key input event - 确保在输入时可见
-    this.managers.uiManager.elements.apiKeyInput.addEventListener(
-      "input",
-      () => {
-        // 确保在输入时内容可见
-        this.managers.uiManager.elements.apiKeyInput.type = "text";
-        this.managers.uiManager.elements.iconSwitch.src = "../icons/hiddle.svg";
       }
     );
 

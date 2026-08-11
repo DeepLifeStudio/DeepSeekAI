@@ -14,6 +14,62 @@ let renderQueue = [];
 let currentReasoningContent = "";
 let currentContent = "";
 
+const UI_COPY = {
+  zh: {
+    missingApiKey: "请先设置 API 密钥。",
+    missingModel: "请先选择或添加模型。",
+    requestFailed: "请求失败，请检查设置后重试。",
+    invalidApiKey: "API 密钥无效或已过期。",
+    rateLimited: "请求过于频繁，请稍后重试。",
+    serviceUnavailable: "AI 服务暂时不可用，请稍后重试。",
+    timedOut: "请求超时，请检查网络后重试。",
+    openSettings: "打开设置",
+  },
+  en: {
+    missingApiKey: "Please set your API key first.",
+    missingModel: "Please select or add a model first.",
+    requestFailed: "The request failed. Check your settings and try again.",
+    invalidApiKey: "Your API key is invalid or expired.",
+    rateLimited: "Too many requests. Wait a moment and try again.",
+    serviceUnavailable: "The AI service is unavailable. Try again in a moment.",
+    timedOut: "The request timed out. Check your connection and try again.",
+    openSettings: "Open settings",
+  },
+};
+
+const getUiCopy = (language) => UI_COPY[language] || UI_COPY.en;
+
+function showSettingsPrompt(responseElement, message, actionLabel, existingIconContainer = null) {
+  responseElement.textContent = "";
+
+  const messageElement = document.createElement("span");
+  messageElement.textContent = message;
+  responseElement.appendChild(messageElement);
+
+  const settingsButton = document.createElement("button");
+  settingsButton.type = "button";
+  settingsButton.textContent = actionLabel;
+  Object.assign(settingsButton.style, {
+    display: "block",
+    marginTop: "8px",
+    padding: "0",
+    border: "0",
+    background: "none",
+    color: "var(--accent-color, #0066cc)",
+    font: "inherit",
+    cursor: "pointer",
+    textDecoration: "underline",
+  });
+  settingsButton.addEventListener("click", () => {
+    chrome.runtime.sendMessage({ action: "openPopup" });
+  });
+  responseElement.appendChild(settingsButton);
+
+  if (existingIconContainer) {
+    responseElement.appendChild(existingIconContainer);
+  }
+}
+
 // 使用 Performance API 优化性能监控
 const performance = window.performance;
 
@@ -151,6 +207,7 @@ export async function getAIResponse(
 
   isGenerating = true;
   window.currentAbortController = signal?.controller || new AbortController();
+  let interfaceLanguage = 'en';
 
   // 设置中止信号处理
   window.currentAbortController.signal.addEventListener('abort', () => {
@@ -179,6 +236,8 @@ export async function getAIResponse(
     const settings = await new Promise(resolve => {
       chrome.runtime.sendMessage({ action: "getSettings" }, resolve);
     });
+    interfaceLanguage = settings.interfaceLanguage || 'en';
+    const uiCopy = getUiCopy(interfaceLanguage);
 
     const provider = settings.provider || 'deepseek';
     let apiKey = '';
@@ -275,50 +334,28 @@ export async function getAIResponse(
     }
 
     if (!apiKey) {
-      const linkElement = document.createElement("a");
-      linkElement.href = "#";
-      linkElement.textContent = "Please first set your API key in extension popup.";
-      linkElement.style.color = "#0066cc";
-      linkElement.style.textDecoration = "underline";
-      linkElement.style.cursor = "pointer";
-      linkElement.addEventListener("click", async (e) => {
-        e.preventDefault();
-        try {
-          await chrome.runtime.sendMessage({ action: "openPopup" });
-        } catch (error) {
-          console.error('Failed to open popup:', error);
-          chrome.runtime.sendMessage({ action: "getSelectedText" });
-        }
-      });
-      responseElement.textContent = "";
-      responseElement.appendChild(linkElement);
-      if (existingIconContainer) {
-        responseElement.appendChild(existingIconContainer);
+      showSettingsPrompt(
+        responseElement,
+        uiCopy.missingApiKey,
+        uiCopy.openSettings,
+        existingIconContainer
+      );
+      if (typeof onGenerationError === 'function') {
+        onGenerationError(uiCopy.missingApiKey);
       }
       return;
     }
 
     // 在缺少模型时进行拦截（非 deepseek 必须手动填写模型）
     if (provider !== 'deepseek' && (!model || (typeof model === 'string' && model.trim() === ''))) {
-      const linkElement = document.createElement("a");
-      linkElement.href = "#";
-      linkElement.textContent = "Please first set your Model in extension popup.";
-      linkElement.style.color = "#0066cc";
-      linkElement.style.textDecoration = "underline";
-      linkElement.style.cursor = "pointer";
-      linkElement.addEventListener("click", async (e) => {
-        e.preventDefault();
-        try {
-          await chrome.runtime.sendMessage({ action: "openPopup" });
-        } catch (error) {
-          console.error('Failed to open popup:', error);
-          chrome.runtime.sendMessage({ action: "getSelectedText" });
-        }
-      });
-      responseElement.textContent = "";
-      responseElement.appendChild(linkElement);
-      if (existingIconContainer) {
-        responseElement.appendChild(existingIconContainer);
+      showSettingsPrompt(
+        responseElement,
+        uiCopy.missingModel,
+        uiCopy.openSettings,
+        existingIconContainer
+      );
+      if (typeof onGenerationError === 'function') {
+        onGenerationError(uiCopy.missingModel);
       }
       return;
     }
@@ -561,10 +598,8 @@ export async function getAIResponse(
     console.error("Error:", error);
 
     if (error.name !== 'AbortError') {
-      // 使用handleError函数处理错误，传递原始错误信息
-      const errorData = error.originalResponse || error.originalError || error;
-      const errorStatus = error.status || (error.originalResponse?.status) || 500;
-      handleError(errorStatus, responseElement, errorData, onGenerationError);
+      const errorStatus = error.status ?? error.originalResponse?.status ?? 500;
+      handleError(errorStatus, responseElement, onGenerationError, interfaceLanguage);
     }
   } finally {
     isGenerating = false;
@@ -577,24 +612,32 @@ export async function getAIResponse(
   }
 }
 
-function handleError(status, responseElement, errorInfo, onGenerationError) {
+function handleError(status, responseElement, onGenerationError, interfaceLanguage) {
   isGenerating = false;
   renderQueue = [];
 
-  // Keep provider-specific details out of the conversation and tell the user what to do next.
-  let errorMessage = "The request failed. Check your settings and try again.";
+  const uiCopy = getUiCopy(interfaceLanguage);
+  let errorMessage = uiCopy.requestFailed;
+  let shouldShowSettings = true;
   if (status === 401) {
-    errorMessage = "Your API key is invalid or expired. Open settings to update it.";
+    errorMessage = uiCopy.invalidApiKey;
   } else if (status === 429) {
-    errorMessage = "Too many requests. Wait a moment and try again.";
+    errorMessage = uiCopy.rateLimited;
+    shouldShowSettings = false;
   } else if (status >= 500) {
-    errorMessage = "The AI service is unavailable. Try again in a moment.";
+    errorMessage = uiCopy.serviceUnavailable;
+    shouldShowSettings = false;
   } else if (status === 0) {
-    errorMessage = "The request timed out. Check your connection and try again.";
+    errorMessage = uiCopy.timedOut;
+    shouldShowSettings = false;
   }
 
-  responseElement.textContent = errorMessage;
   responseElement.classList.add('error'); // 添加错误状态类
+  if (shouldShowSettings) {
+    showSettingsPrompt(responseElement, errorMessage, uiCopy.openSettings);
+  } else {
+    responseElement.textContent = errorMessage;
+  }
 
   // 调用错误回调
   if (typeof onGenerationError === 'function') {

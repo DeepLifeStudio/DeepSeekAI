@@ -384,7 +384,7 @@ export function createDragHandle(removeCallback, minimizeCallback, pinCallback) 
     }
   });
 
-  // 复制所有对话按钮（在最小化按钮左侧，固定按钮右侧，或者根据新的布局调整）
+  // 复制所有对话按钮（在固定按钮左侧）
   // 布局顺序：Copy -> Pin -> Minimize -> Close
   // Close: right 10px
   // Minimize: right 42px
@@ -404,7 +404,7 @@ export function createDragHandle(removeCallback, minimizeCallback, pinCallback) 
     margin: "0",
     transition: "all 0.2s cubic-bezier(0.25, 1, 0.5, 1)",
     position: "absolute",
-    right: "106px", // Pin按钮左侧
+    right: "106px",
     top: "50%",
     transform: "translateY(-50%) scale(1)",
     width: "24px",
@@ -541,12 +541,11 @@ export function createDragHandle(removeCallback, minimizeCallback, pinCallback) 
     }
   });
 
-
-  // 固定按钮（在最小化按钮左侧）
   const pinButton = document.createElement("button");
   pinButton.className = "pin-button tooltip-trigger";
   pinButton.type = "button";
-  pinButton.setAttribute("aria-label", "Pin chat");
+  pinButton.setAttribute("aria-label", "Keep chat open");
+  pinButton.setAttribute("aria-pressed", "false");
   Object.assign(pinButton.style, {
     display: "none",
     background: "none",
@@ -554,11 +553,10 @@ export function createDragHandle(removeCallback, minimizeCallback, pinCallback) 
     cursor: "pointer",
     padding: "8px",
     margin: "0",
-    transition: "all 0.2s cubic-bezier(0.25, 1, 0.5, 1)",
     position: "absolute",
-    right: "74px", // 在最小化按钮（42px）左边
+    right: "74px",
     top: "50%",
-    transform: "translateY(-50%) scale(1)",
+    transform: "translateY(-50%)",
     width: "24px",
     height: "24px",
     minWidth: "24px",
@@ -571,16 +569,12 @@ export function createDragHandle(removeCallback, minimizeCallback, pinCallback) 
     zIndex: "10",
     appearance: "none",
     WebkitAppearance: "none",
-    MozAppearance: "none",
     borderRadius: "6px",
-    display: "flex",
     alignItems: "center",
     justifyContent: "center"
   });
 
   const pinIcon = document.createElement("div");
-  pinIcon.className = "pin-icon";
-  // 图钉 SVG 图标，与其他按钮风格一致
   pinIcon.innerHTML = `
     <svg viewBox="0 0 24 24" width="16" height="16" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block">
       <path d="M16 4v4l2 2v2h-5v7l-1 1-1-1v-7H6v-2l2-2V4h8z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
@@ -592,71 +586,45 @@ export function createDragHandle(removeCallback, minimizeCallback, pinCallback) 
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    position: "relative",
     color: "var(--text-secondary)",
-    transition: "transform 0.15s ease, color 0.15s ease",
-    padding: "0",
-    zIndex: "10"
+    transition: "transform 0.15s ease, color 0.15s ease"
   });
   pinButton.appendChild(pinIcon);
 
-  // 更新固定按钮图标状态
   const updatePinIcon = (isPinned) => {
-    if (isPinned) {
-      pinIcon.innerHTML = `
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block">
-          <path d="M16 4v4l2 2v2h-5v7l-1 1-1-1v-7H6v-2l2-2V4h8z" fill="currentColor" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      `;
-      pinIcon.style.color = "var(--accent-color, #007aff)";
-    } else {
-      pinIcon.innerHTML = `
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block">
-          <path d="M16 4v4l2 2v2h-5v7l-1 1-1-1v-7H6v-2l2-2V4h8z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      `;
-      pinIcon.style.color = "var(--text-secondary)";
-    }
+    pinIcon.innerHTML = `
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block">
+        <path d="M16 4v4l2 2v2h-5v7l-1 1-1-1v-7H6v-2l2-2V4h8z" ${isPinned ? 'fill="currentColor"' : ''} stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    `;
+    pinIcon.style.color = isPinned
+      ? "var(--accent-color, #007aff)"
+      : "var(--text-secondary)";
   };
 
   pinButton.addEventListener("mouseenter", () => {
     pinIcon.style.transform = "scale(1.1)";
-    if (!isTempPinned) {
-      pinIcon.style.color = "var(--accent-color, #007aff)";
-    }
+    if (!isTempPinned) pinIcon.style.color = "var(--accent-color, #007aff)";
   });
   pinButton.addEventListener("mouseleave", () => {
     pinIcon.style.transform = "scale(1)";
-    if (!isTempPinned) {
-      pinIcon.style.color = "var(--text-secondary)";
-    }
+    if (!isTempPinned) pinIcon.style.color = "var(--text-secondary)";
   });
   pinButton.addEventListener("mousedown", (e) => {
     e.stopPropagation();
     pinIcon.style.transform = "scale(1.2)";
-    pinButton.style.transform = "translateY(-50%)";
-    pinButton.style.top = "50%";
     if ('vibrate' in navigator) navigator.vibrate(8);
   });
   pinButton.addEventListener("mouseup", () => {
     pinIcon.style.transform = "scale(1.1)";
-    pinButton.style.transform = "translateY(-50%)";
   });
   pinButton.addEventListener("click", (e) => {
     e.stopPropagation();
     e.preventDefault();
-
-    pinButton.style.transform = "translateY(-50%)";
-    pinIcon.style.transform = "scale(1)";
-
-    // 切换临时固定状态
     isTempPinned = !isTempPinned;
     updatePinIcon(isTempPinned);
-
-    // 调用回调函数通知状态变化
-    if (typeof pinCallback === 'function') {
-      pinCallback(isTempPinned);
-    }
+    pinButton.setAttribute("aria-pressed", String(isTempPinned));
+    if (typeof pinCallback === 'function') pinCallback(isTempPinned);
   });
 
   dragHandle.addEventListener("mouseenter", () => {

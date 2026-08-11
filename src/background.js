@@ -24,7 +24,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         "deepseekCustomApiUrl", "siliconflowCustomApiUrl", "openrouterCustomApiUrl",
         "volcengineCustomApiUrl", "tencentcloudCustomApiUrl", "iflytekstarCustomApiUrl",
         "baiducloudCustomApiUrl", "aliyunCustomApiUrl", "aihubmixCustomApiUrl",
-        "language", "model", "customSystemPrompt"
+        "language", "model", "customSystemPrompt", "interfaceLanguage"
       ];
 
       // 为每个自定义服务商添加API key的键名
@@ -75,6 +75,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           aliyunCustomApiUrl: data.aliyunCustomApiUrl || '',
           aihubmixCustomApiUrl: data.aihubmixCustomApiUrl || '',
           language: data.language || 'en',
+          interfaceLanguage: data.interfaceLanguage || 'en',
           model: data.model || '',
           provider: provider,
           customApiKey: customApiKey,
@@ -182,7 +183,18 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
         if (!response.ok) {
           console.error(`❌ HTTP错误! 状态码: ${response.status}`);
-          throw new Error(`HTTP error! status: ${response.status}`);
+          if (sender?.tab?.id) {
+            chrome.tabs.sendMessage(sender.tab.id, {
+              type: "streamResponse",
+              response: {
+                ok: false,
+                status: response.status,
+                error: "Request failed",
+                done: true
+              }
+            });
+          }
+          return;
         }
 
         const reader = response.body.getReader();
@@ -258,7 +270,12 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           if (sender?.tab?.id) {
             chrome.tabs.sendMessage(sender.tab.id, {
               type: "streamResponse",
-              response: { ok: false, error: error.message }
+              response: {
+                ok: false,
+                status: 0,
+                error: error.message,
+                done: true
+              }
             });
           }
         } finally {
@@ -275,10 +292,17 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           console.log(`❌ 请求模型: ${JSON.parse(request.body || '{}').model || '未知'}`);
         }
 
-        sendResponse({
-          ok: false,
-          error: error.message
-        });
+        if (sender?.tab?.id) {
+          chrome.tabs.sendMessage(sender.tab.id, {
+            type: "streamResponse",
+            response: {
+              ok: false,
+              status: 0,
+              error: error.message,
+              done: true
+            }
+          });
+        }
       })
       .finally(() => {
         // 清理控制器

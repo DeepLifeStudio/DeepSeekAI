@@ -1,0 +1,116 @@
+{
+  "manifest_version": 3,
+  "name": "DeepSeek AI - Floating AI Chat",
+  "description": "Floating AI chat workspace. Bring your own key — supports DeepSeek and any OpenAI-compatible API. Not affiliated with DeepSeek.",
+  "version": "3.4.5",
+  "permissions": [
+    "storage",
+    "contextMenus",
+    "scripting",
+    "commands",
+    "tabs"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>",
+        "file:///*",
+        "http://localhost/*",
+        "http://127.0.0.1/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "css": [
+        "style.css"
+      ],
+      "all_frames": true,
+      "match_about_blank": true
+    }
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "icons/icon16.png",
+        "icons/icon24.png",
+        "icons/icon32.png",
+        "icons/icon48.png",
+        "icons/icon128.png",
+        "icons/copy.svg",
+        "icons/close.svg",
+        "icons/closeClicked.svg",
+        "fonts/*",
+        "Instructions.html",
+        "instructions.js",
+        "style.css"
+      ],
+      "matches": [
+        "<all_urls>",
+        "file:///*",
+        "http://localhost/*",
+        "http://127.0.0.1/*"
+      ]
+    },
+    {
+      "resources": [
+        "icons/*.svg",
+        "icons/*.png",
+        "style.css"
+      ],
+      "matches": [
+        "<all_urls>",
+        "file:///*",
+        "http://localhost/*",
+        "http://127.0.0.1/*"
+      ]
+    }
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'",
+    "sandbox": "sandbox allow-scripts allow-forms allow-popups allow-modals; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; object-src 'self'; font-src 'self' https://cdn.jsdelivr.net"
+  },
+  "browser_specific_settings": {
+    "edge": {
+      "browser_action_next_to_addressbar": true
+    }
+  },
+  "commands": {
+    "toggle-chat": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+Y",
+        "mac": "Command+Shift+Y",
+        "windows": "Ctrl+Shift+Y"
+      },
+      "description": "Open or close the chat window (destroys session)."
+    },
+    "show-hide-chat": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+U",
+        "mac": "Command+Shift+U",
+        "windows": "Ctrl+Shift+U"
+      },
+      "description": "Show or hide the chat window (preserves session)."
+    }
+  },
+  "host_permissions": [
+    "<all_urls>"
+  ]
+}

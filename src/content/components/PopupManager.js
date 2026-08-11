@@ -17,6 +17,7 @@ class PopupManager {
   constructor() {
     this.currentPopup = null;
     this.minimizeIcon = null;
+    this.isMinimizing = false;
     this.isRememberWindowSize = false;
     this.suppressQuickActionsUntil = 0;
     this.removeQuickActionsCallback = null; // 外部注入的移除快捷按钮回调
@@ -173,6 +174,9 @@ class PopupManager {
       console.error('无法最小化：currentPopup 不存在');
       return;
     }
+    if (popupStateManager.isMinimized() || this.isMinimizing) return;
+
+    this.isMinimizing = true;
 
     // 隐藏窗口（带动画）
     this.currentPopup.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
@@ -180,28 +184,32 @@ class PopupManager {
     this.currentPopup.style.transform = 'scale(0.9)';
 
     setTimeout(async () => {
-      if (this.currentPopup) {
-        this.currentPopup.style.display = 'none';
-        popupStateManager.setVisible(false);
-        popupStateManager.setMinimized(true);
+      try {
+        if (this.currentPopup) {
+          this.currentPopup.style.display = 'none';
+          popupStateManager.setVisible(false);
+          popupStateManager.setMinimized(true);
 
-        console.log('窗口已隐藏，创建小图标...');
+          console.log('窗口已隐藏，创建小图标...');
 
-        // 创建并显示小图标
-        const position = await popupStateManager.loadIconPosition();
-        const { createMinimizeIcon } = await import('./IconManager');
+          // 创建并显示小图标
+          const position = await popupStateManager.loadIconPosition();
+          const { createMinimizeIcon } = await import('./IconManager');
 
-        this.minimizeIcon = createMinimizeIcon(() => {
-          this.restorePopup();
-        }, position);
+          this.minimizeIcon = createMinimizeIcon(() => {
+            this.restorePopup();
+          }, position);
 
-        document.body.appendChild(this.minimizeIcon);
-        console.log('小图标已创建', { position });
+          document.body.appendChild(this.minimizeIcon);
+          console.log('小图标已创建', { position });
 
-        // 触觉反馈
-        if ('vibrate' in navigator) {
-          navigator.vibrate(8);
+          // 触觉反馈
+          if ('vibrate' in navigator) {
+            navigator.vibrate(8);
+          }
         }
+      } finally {
+        this.isMinimizing = false;
       }
     }, 200);
   }
