@@ -2,7 +2,7 @@
 
 <div align="center">
 
-<img src="src/icons/app-logo.png" alt="Extension logo" width="200" />
+<img src="src/icons/deepseek-official-logo.svg" alt="Extension logo" width="200" />
 
 [![Chrome Web Store](https://img.shields.io/chrome-web-store/v/bjjobdlpgglckcmhgmmecijpfobmcpap)](https://chromewebstore.google.com/detail/bjjobdlpgglckcmhgmmecijpfobmcpap)
 [![License](https://img.shields.io/github/license/DeepLifeStudio/DeepSeekAI)](LICENSE)
