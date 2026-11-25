@@ -4,6 +4,7 @@ import { addIconsToElement } from './IconManager';
 import { isDarkMode } from '../utils/themeManager';
 import { focusInputIfSafe } from '../utils/focusManager';
 import { getPopupElement, getAiResponseElement, getShadowContainer } from './ShadowContainer';
+import { getContentUiCopy } from '../utils/uiCopy';
 
 const INPUT_SINGLE_LINE_HEIGHT = "48px";
 const INPUT_MULTILINE_LINE_HEIGHT = "1.3";
@@ -16,12 +17,13 @@ const resetTextareaLayout = (textarea) => {
 };
 
 export const createQuestionInputContainer = (aiResponseContainer) => {
+  const uiCopy = getContentUiCopy();
   const container = document.createElement("div");
   container.className = "input-container-wrapper";
 
   container.innerHTML = `
     <div class="input-container">
-      <textarea class="expandable-textarea" placeholder="Ask me anything..."></textarea>
+      <textarea class="expandable-textarea" placeholder="${uiCopy.askPlaceholder}"></textarea>
       <svg class="send-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M22 2L11 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -31,7 +33,7 @@ export const createQuestionInputContainer = (aiResponseContainer) => {
           <circle class="loading-spinner" cx="12" cy="12" r="8" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="32 20" fill="none" />
           <rect class="stop-button" x="9" y="9" width="6" height="6" rx="1.5" fill="currentColor" stroke="none" />
         </svg>
-        <span class="tooltiptext">Stop</span>
+        <span class="tooltiptext">${uiCopy.stop}</span>
       </div>
     </div>
   `;

@@ -1,0 +1,61 @@
+:root {
+  /* Typography */
+  --ds-font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+  --ds-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* Radii */
+  --ds-radius-sm: 6px;
+  --ds-radius-md: 10px;
+  --ds-radius-lg: 14px;
+  --ds-radius-pill: 999px;
+
+  /* Motion - Apple-grade unified curves & durations */
+  --ds-duration-fast: 150ms;
+  --ds-duration-normal: 220ms;
+  --ds-duration-slow: 320ms;
+  --ds-ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --ds-ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
+  --ds-ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* Colors - Light */
+  --ds-bg-primary: #fafafa;
+  --ds-bg-secondary: #f0f0f2;
+  --ds-bg-tertiary: #e5e5e7;
+  --ds-text-primary: #1d1d1f;
+  --ds-text-secondary: #86868b;
+  --ds-accent: #007aff;
+  --ds-accent-hover: #0056d6;
+  --ds-border: rgba(0, 0, 0, 0.08);
+  --ds-divider: rgba(60, 60, 67, 0.06);
+  --ds-success: #34c759;
+  --ds-warning: #ff9500;
+  --ds-error: #ff3b30;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ds-bg-primary: #1c1c1e;
+    --ds-bg-secondary: #2c2c2e;
+    --ds-bg-tertiary: #3a3a3c;
+    --ds-text-primary: rgba(255, 255, 255, 0.92);
+    --ds-text-secondary: rgba(255, 255, 255, 0.6);
+    --ds-accent: #0a84ff;
+    --ds-accent-hover: #409cff;
+    --ds-border: rgba(255, 255, 255, 0.12);
+    --ds-divider: rgba(255, 255, 255, 0.08);
+    --ds-success: #30d158;
+    --ds-warning: #ff9f0a;
+    --ds-error: #ff453a;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

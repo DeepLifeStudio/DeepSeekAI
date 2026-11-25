@@ -1,3 +1,5 @@
+import { getContentUiCopy } from '../utils/uiCopy';
+
 export function initDraggable(dragHandle, popup) {
   let isDragging = false;
   let startX, startY;
@@ -36,31 +38,18 @@ export function initDraggable(dragHandle, popup) {
     // 添加拖拽的惯性和流畅感
     popup.style.left = `${initialX + dx}px`;
     popup.style.top = `${initialY + dy}px`;
-
-    // 更新窗口位置时显示距离指示器（仅当移动足够距离时）
-    const moveDistance = Math.sqrt(dx * dx + dy * dy);
-    if (moveDistance > 50) {
-      // 显示拖拽距离指示器
-      showDragDistance(popup, moveDistance.toFixed(0));
-    }
   }
 
   function stopDragging() {
     if (!isDragging) return;
 
     isDragging = false;
-    popup.style.transition = 'transform 0.05s cubic-bezier(0.4, 0, 0.2, 1)';
+    popup.style.transition = 'transform 150ms cubic-bezier(0.22, 1, 0.36, 1)';
 
     // 移除拖拽状态样式
     popup.classList.remove('dragging');
     // 恢复光标样式
     dragHandle.style.cursor = 'grab';
-
-    // 移除拖拽距离指示器
-    const distanceIndicator = popup.querySelector('.drag-distance');
-    if (distanceIndicator) {
-      distanceIndicator.remove();
-    }
 
     // 添加"放置"的触感反馈
     if ('vibrate' in navigator) {
@@ -72,32 +61,6 @@ export function initDraggable(dragHandle, popup) {
     setTimeout(() => {
       popup.classList.remove('drag-placed');
     }, 150);
-  }
-
-  // 显示拖拽距离指示器
-  function showDragDistance(popup, distance) {
-    let distanceIndicator = popup.querySelector('.drag-distance');
-
-    if (!distanceIndicator) {
-      distanceIndicator = document.createElement('div');
-      distanceIndicator.className = 'drag-distance';
-      distanceIndicator.style.position = 'absolute';
-      distanceIndicator.style.bottom = '-25px';
-      distanceIndicator.style.left = '50%';
-      distanceIndicator.style.transform = 'translateX(-50%)';
-      distanceIndicator.style.backgroundColor = 'var(--bg-secondary)';
-      distanceIndicator.style.color = 'var(--text-secondary)';
-      distanceIndicator.style.padding = '4px 8px';
-      distanceIndicator.style.borderRadius = '4px';
-      distanceIndicator.style.fontSize = '10px';
-      distanceIndicator.style.pointerEvents = 'none';
-      distanceIndicator.style.zIndex = '2000';
-      distanceIndicator.style.opacity = '0.9';
-      distanceIndicator.style.boxShadow = 'var(--shadow-sm)';
-      popup.appendChild(distanceIndicator);
-    }
-
-    distanceIndicator.textContent = `已移动 ${distance}px`;
   }
 
   return () => {
@@ -124,6 +87,7 @@ export function resizeMoveListener(event) {
 }
 
 export function createDragHandle(removeCallback, minimizeCallback, pinCallback) {
+  const uiCopy = getContentUiCopy();
   const dragHandle = document.createElement("div");
   Object.assign(dragHandle.style, {
     position: "absolute",
@@ -178,27 +142,20 @@ export function createDragHandle(removeCallback, minimizeCallback, pinCallback) 
   titleContainer.appendChild(logo);
   titleContainer.appendChild(textNode);
 
-  // 添加拖拽提示
-  const dragTooltip = document.createElement("div");
-  dragTooltip.className = "tool-tip";
-  dragTooltip.textContent = "Drag to move the window";
-  dragTooltip.style.top = "45px";
-  dragTooltip.style.left = "50%";
-  dragTooltip.style.transform = "translateX(-50%)";
-  dragHandle.appendChild(dragTooltip);
-
   const closeButton = document.createElement("button");
   closeButton.className = "close-button tooltip-trigger";
   closeButton.type = "button";
-  closeButton.setAttribute("aria-label", "Close chat");
+  closeButton.setAttribute("aria-label", uiCopy.closeChat);
+  closeButton.title = uiCopy.closeChat;
   Object.assign(closeButton.style, {
-    display: "none",
+    display: "flex",
+    opacity: "0.45",
     background: "none",
     border: "none",
     cursor: "pointer",
     padding: "8px",
     margin: "0",
-    transition: "all 0.2s cubic-bezier(0.25, 1, 0.5, 1)",
+    transition: "opacity 150ms cubic-bezier(0.4, 0, 0.2, 1), transform 150ms cubic-bezier(0.4, 0, 0.2, 1)",
     position: "absolute",
     right: "10px",
     top: "50%",
@@ -302,15 +259,17 @@ export function createDragHandle(removeCallback, minimizeCallback, pinCallback) 
   const minimizeButton = document.createElement("button");
   minimizeButton.className = "minimize-button tooltip-trigger";
   minimizeButton.type = "button";
-  minimizeButton.setAttribute("aria-label", "Minimize chat");
+  minimizeButton.setAttribute("aria-label", uiCopy.minimizeChat);
+  minimizeButton.title = uiCopy.minimizeChat;
   Object.assign(minimizeButton.style, {
-    display: "none",
+    display: "flex",
+    opacity: "0.45",
     background: "none",
     border: "none",
     cursor: "pointer",
     padding: "8px",
     margin: "0",
-    transition: "all 0.2s cubic-bezier(0.25, 1, 0.5, 1)",
+    transition: "opacity 150ms cubic-bezier(0.4, 0, 0.2, 1), transform 150ms cubic-bezier(0.4, 0, 0.2, 1)",
     position: "absolute",
     right: "42px",
     top: "50%",
@@ -394,15 +353,17 @@ export function createDragHandle(removeCallback, minimizeCallback, pinCallback) 
   const copyButton = document.createElement("button");
   copyButton.className = "copy-all-button tooltip-trigger";
   copyButton.type = "button";
-  copyButton.setAttribute("aria-label", "Copy conversation");
+  copyButton.setAttribute("aria-label", uiCopy.copyConversation);
+  copyButton.title = uiCopy.copyConversation;
   Object.assign(copyButton.style, {
-    display: "none",
+    display: "flex",
+    opacity: "0.45",
     background: "none",
     border: "none",
     cursor: "pointer",
     padding: "8px",
     margin: "0",
-    transition: "all 0.2s cubic-bezier(0.25, 1, 0.5, 1)",
+    transition: "opacity 150ms cubic-bezier(0.4, 0, 0.2, 1), transform 150ms cubic-bezier(0.4, 0, 0.2, 1)",
     position: "absolute",
     right: "106px",
     top: "50%",
@@ -450,7 +411,7 @@ export function createDragHandle(removeCallback, minimizeCallback, pinCallback) 
   // 添加工具提示
   const copyTooltip = document.createElement('div');
   copyTooltip.className = 'tool-tip';
-  copyTooltip.textContent = 'Copy entire conversation';
+  copyTooltip.textContent = uiCopy.copyConversation;
   copyTooltip.style.top = '35px';
   copyTooltip.style.right = '-20px';
   copyTooltip.style.width = 'max-content';
@@ -544,15 +505,18 @@ export function createDragHandle(removeCallback, minimizeCallback, pinCallback) 
   const pinButton = document.createElement("button");
   pinButton.className = "pin-button tooltip-trigger";
   pinButton.type = "button";
-  pinButton.setAttribute("aria-label", "Keep chat open");
+  pinButton.setAttribute("aria-label", uiCopy.pinChat);
+  pinButton.title = uiCopy.pinChat;
   pinButton.setAttribute("aria-pressed", "false");
   Object.assign(pinButton.style, {
-    display: "none",
+    display: "flex",
+    opacity: "0.45",
     background: "none",
     border: "none",
     cursor: "pointer",
     padding: "8px",
     margin: "0",
+    transition: "opacity 150ms cubic-bezier(0.4, 0, 0.2, 1), transform 150ms cubic-bezier(0.4, 0, 0.2, 1)",
     position: "absolute",
     right: "74px",
     top: "50%",
@@ -597,6 +561,7 @@ export function createDragHandle(removeCallback, minimizeCallback, pinCallback) 
         <path d="M16 4v4l2 2v2h-5v7l-1 1-1-1v-7H6v-2l2-2V4h8z" ${isPinned ? 'fill="currentColor"' : ''} stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
     `;
+    pinButton.style.opacity = isPinned ? "1" : (dragHandle.matches(":hover") ? "1" : "0.45");
     pinIcon.style.color = isPinned
       ? "var(--accent-color, #007aff)"
       : "var(--text-secondary)";
@@ -628,17 +593,17 @@ export function createDragHandle(removeCallback, minimizeCallback, pinCallback) 
   });
 
   dragHandle.addEventListener("mouseenter", () => {
-    closeButton.style.display = "flex";
-    minimizeButton.style.display = "flex";
-    pinButton.style.display = "flex";
-    copyButton.style.display = "flex";
+    closeButton.style.opacity = "1";
+    minimizeButton.style.opacity = "1";
+    pinButton.style.opacity = "1";
+    copyButton.style.opacity = "1";
   });
 
   dragHandle.addEventListener("mouseleave", () => {
-    closeButton.style.display = "none";
-    minimizeButton.style.display = "none";
-    pinButton.style.display = "none";
-    copyButton.style.display = "none";
+    closeButton.style.opacity = "0.45";
+    minimizeButton.style.opacity = "0.45";
+    pinButton.style.opacity = isTempPinned ? "1" : "0.45";
+    copyButton.style.opacity = "0.45";
   });
 
   dragHandle.appendChild(titleContainer);

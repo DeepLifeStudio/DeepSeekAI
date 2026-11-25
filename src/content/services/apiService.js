@@ -1,5 +1,6 @@
 import { getAllowAutoScroll, scrollToBottom, updateAllowAutoScroll } from "../utils/scrollManager";
 import { render, showCodeCopyButtons, isMathBalanced } from "../utils/markdownRenderer";
+import { getContentUiCopy } from "../utils/uiCopy";
 import {
   getDeepSeekModelLabel,
   resolveDeepSeekModel,
@@ -109,7 +110,7 @@ async function processRenderQueue(responseElement, ps, aiResponseContainer) {
         reasoningContentElement.innerHTML = `
           <div class="reasoning-header">
             <div class="reasoning-toggle"></div>
-            <span>Reasoning process</span>
+            <span>${getContentUiCopy().reasoningProcess}</span>
           </div>
           <div class="reasoning-content-inner"></div>
         `;
@@ -398,8 +399,16 @@ export async function getAIResponse(
     let systemPrompt = '';
 
     if (quickActionPrompt) {
-      // 快捷按钮有自己的专用提示，直接使用，不与自定义系统提示混合
-      systemPrompt = quickActionPrompt;
+      // 快捷按钮有自己的专用提示，不与自定义系统提示混合；非翻译动作仍遵循用户的回答语言设置
+      const isTranslateAction = quickActionPrompt.includes('Translate the content inside <source_text>');
+      if (isTranslateAction) {
+        systemPrompt = quickActionPrompt;
+      } else {
+        const actionLanguageRule = language === "auto"
+          ? "Output language requirement: Respond in the same language as the source text."
+          : `Output language requirement: Respond ONLY in ${language}.`;
+        systemPrompt = `${quickActionPrompt}\n\n${actionLanguageRule}`;
+      }
     } else {
       // 常规对话：结合语言设置和自定义系统提示
       const languagePrompt = language === "auto"

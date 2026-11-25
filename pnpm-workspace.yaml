@@ -1,0 +1,6 @@
+allowBuilds:
+  cwebp-bin: set this to true or false
+  gifsicle: set this to true or false
+  mozjpeg: set this to true or false
+  optipng-bin: set this to true or false
+  pngquant-bin: set this to true or false

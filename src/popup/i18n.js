@@ -26,7 +26,7 @@ export class I18nManager {
         customProviderApiKeyPlaceholder: '请输入API密钥',
         customProviderUrlExamplePlaceholder: 'https://api.example.com/v1/chat/completions',
         customProviderModelNameExamplePlaceholder: '例如: deepseek-v4-flash',
-        apiUrlHint: '📝 需使用 OpenAI 兼容的 API 接口格式',
+        apiUrlHint: '需使用 OpenAI 兼容的 API 接口格式',
         customProviderEmpty: '服务商名称不能为空',
         customProviderSaveSuccess: '自定义服务商已保存',
         customProviderSaveError: '保存自定义服务商失败',
@@ -69,9 +69,10 @@ export class I18nManager {
         selectionEnabledLabel: '快速按钮',
         preferredLanguageLabel: '回答语言',
         interfaceLanguageLabel: '界面语言',
+        advancedSettings: '高级设置',
         pinWindowLabel: '固定窗口',
-        shortcutSettingsText: '快捷键设置',
-        shortcutDescription: '请前往设置快捷键',
+        shortcutLabel: '快捷键',
+        shortcutSettingsText: '配置',
         instructionsText: '使用方式',
         githubText: 'GitHub',
         statusText: 'API服务状态',
@@ -95,7 +96,7 @@ export class I18nManager {
         saving: '保存中...',
         checkModelOrKeyOrPermission: '请检查模型ID或者API Key，或确认该模型是否有权限使用',
         toggleChatShortcut: '通过同一快捷键可以打开/关闭会话窗口',
-        toggleChatTip: '💡 可自定义快捷键以更快地打开/关闭对话窗口',
+        toggleChatTip: '可自定义快捷键以更快地打开/关闭对话窗口',
         customSystemPromptLabel: '自定义系统提示词',
         customSystemPromptText: '配置',
         customSystemPromptTitle: '自定义系统提示词',
@@ -131,7 +132,7 @@ export class I18nManager {
         customProviderApiKeyPlaceholder: 'Please enter API key',
         customProviderUrlExamplePlaceholder: 'https://api.example.com/v1/chat/completions',
         customProviderModelNameExamplePlaceholder: 'e.g. deepseek-v4-flash',
-        apiUrlHint: '📝 Must use OpenAI compatible API format',
+        apiUrlHint: 'Must use OpenAI compatible API format',
         customProviderEmpty: 'Provider name cannot be empty',
         customProviderSaveSuccess: 'Custom provider saved',
         customProviderSaveError: 'Failed to save custom provider',
@@ -174,9 +175,10 @@ export class I18nManager {
         selectionEnabledLabel: 'Quick Button',
         preferredLanguageLabel: 'Response Language',
         interfaceLanguageLabel: 'Interface Language',
+        advancedSettings: 'Advanced',
         pinWindowLabel: 'Pin Window',
-        shortcutSettingsText: 'Shortcut Settings',
-        shortcutDescription: 'Please go to set shortcuts',
+        shortcutLabel: 'Shortcuts',
+        shortcutSettingsText: 'Configure',
         instructionsText: 'Usage',
         githubText: 'GitHub',
         statusText: 'API Service Status',
@@ -200,7 +202,7 @@ export class I18nManager {
         saving: 'Saving...',
         checkModelOrKeyOrPermission: 'Please check the model ID or API key, or whether the model is permitted for your account',
         toggleChatShortcut: 'Use the same shortcut key to open/close the chat window',
-        toggleChatTip: '💡 You can customize shortcuts to quickly open/close the chat window',
+        toggleChatTip: 'You can customize shortcuts to quickly open/close the chat window',
         customSystemPromptLabel: 'Custom System Prompt',
         customSystemPromptText: 'Configure',
         customSystemPromptTitle: 'Custom System Prompt',
@@ -253,14 +255,15 @@ export class I18nManager {
       this.updateElementText('selectionEnabledLabel', 'selectionEnabledLabel');
       this.updateElementText('preferredLanguageLabel', 'preferredLanguageLabel');
       this.updateElementText('interfaceLanguageLabel', 'interfaceLanguageLabel');
+      this.updateElementText('advancedSettingsLabel', 'advancedSettings');
       this.updateElementText('rememberWindowSizeLabel', 'rememberWindowSize');
       this.updateElementText('pinWindowLabel', 'pinWindowLabel');
       this.updateElementText('customSystemPromptLabel', 'customSystemPromptLabel');
       this.updateElementText('customSystemPromptText', 'customSystemPromptText');
 
       // 更新快捷键设置标签
+      this.updateElementText('shortcutLabel', 'shortcutLabel');
       this.updateElementText('shortcutSettingsText', 'shortcutSettingsText');
-      this.updateElementText('shortcutDescription', 'shortcutDescription');
 
       // 更新帮助链接标签
       this.updateElementText('instructionsText', 'instructionsText');

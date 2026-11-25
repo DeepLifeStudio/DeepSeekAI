@@ -18,7 +18,7 @@ class PopupManager {
     this.currentPopup = null;
     this.minimizeIcon = null;
     this.isMinimizing = false;
-    this.isRememberWindowSize = false;
+    this.isRememberWindowSize = true;
     this.suppressQuickActionsUntil = 0;
     this.removeQuickActionsCallback = null; // 外部注入的移除快捷按钮回调
     this.removeIconCallback = null; // 外部注入的移除图标回调

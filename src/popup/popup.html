@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>DeepSeek AI</title>
+    <link rel="stylesheet" href="styles/tokens.css" />
     <style>
       :root {
         /* 亮色模式变量 - 优化苹果风格色彩 */
@@ -1664,20 +1665,9 @@
         transform: translateY(0);
       }
 
-      /* 滚动提示动画 */
+      /* 滚动提示动画（已隐藏，避免遮挡底部反馈链接） */
       .scroll-indicator {
-        position: fixed;
-        bottom: 15px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 20px;
-        height: 30px;
-        border: 1.5px solid var(--text-secondary);
-        border-radius: 10px;
-        opacity: 0.4;
-        transition: opacity 0.3s ease;
-        pointer-events: none;
-        z-index: 100;
+        display: none;
       }
 
       .scroll-indicator::before {
@@ -1745,6 +1735,152 @@
         .prompt-actions {
           justify-content: center;
         }
+      }
+
+      /* 渐进式披露：高级选项折叠区 */
+      .advanced-settings {
+        margin-top: 8px;
+        border-top: 1px solid var(--border-color);
+        padding-top: 8px;
+      }
+
+      .advanced-settings-summary {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        list-style: none;
+        cursor: pointer;
+        padding: 7px 10px;
+        border-radius: 8px;
+        background-color: var(--input-background);
+        border: 1px solid var(--border-color);
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--text-primary);
+        opacity: 0.88;
+        user-select: none;
+        transition: background-color var(--ds-duration-fast, 150ms) var(--ds-ease-standard, ease),
+                    opacity var(--ds-duration-fast, 150ms) var(--ds-ease-standard, ease);
+      }
+
+      .advanced-settings-summary-left {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .advanced-settings-summary::-webkit-details-marker {
+        display: none;
+      }
+
+      .advanced-settings-summary:hover {
+        background-color: var(--background-tertiary);
+        opacity: 1;
+      }
+
+      .advanced-settings-chevron {
+        width: 14px;
+        height: 14px;
+        transition: transform var(--ds-duration-fast, 150ms) var(--ds-ease-standard, ease);
+      }
+
+      .advanced-settings[open] .advanced-settings-chevron {
+        transform: rotate(180deg);
+      }
+
+      .advanced-settings-body {
+        padding-top: 8px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .lang-picker-wrapper {
+        position: relative;
+        min-width: 150px;
+      }
+
+      .lang-picker-trigger {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 6px 10px;
+        height: 32px;
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+        background-color: var(--input-background);
+        color: var(--text-primary);
+        font-size: 13px;
+        cursor: pointer;
+        transition: border-color var(--ds-duration-fast, 150ms) var(--ds-ease-standard, ease),
+                    background-color var(--ds-duration-fast, 150ms) var(--ds-ease-standard, ease);
+      }
+
+      .lang-picker-trigger:hover {
+        background-color: var(--background-tertiary);
+      }
+
+      .lang-picker-current {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .lang-picker-chevron {
+        flex-shrink: 0;
+        opacity: 0.65;
+        transition: transform var(--ds-duration-fast, 150ms) var(--ds-ease-standard, ease);
+      }
+
+      .lang-picker-trigger[aria-expanded="true"] .lang-picker-chevron {
+        transform: rotate(180deg);
+      }
+
+      .lang-picker-menu {
+        position: absolute;
+        top: calc(100% + 4px);
+        right: 0;
+        width: 180px;
+        max-height: 220px;
+        overflow-y: auto;
+        padding: 4px;
+        border-radius: 10px;
+        background-color: var(--background-primary);
+        border: 1px solid var(--border-color);
+        box-shadow: 0 10px 28px rgba(0, 0, 0, 0.16);
+        z-index: 1000;
+      }
+
+      .lang-picker-option {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 8px;
+        border: none;
+        border-radius: 6px;
+        background: transparent;
+        color: var(--text-primary);
+        font-size: 13px;
+        text-align: left;
+        cursor: pointer;
+        transition: background-color var(--ds-duration-fast, 150ms) var(--ds-ease-standard, ease);
+      }
+
+      .lang-picker-option:hover {
+        background-color: var(--background-secondary);
+      }
+
+      .lang-picker-option.is-selected {
+        background-color: var(--input-background-focus);
+        color: var(--accent-color);
+        font-weight: 500;
       }
     </style>
   </head>
@@ -1842,19 +1978,6 @@
           </div>
         </div>
 
-        <div class="api-url-container">
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <label for="customApiUrl" id="customApiUrlLabel">Custom API URL</label>
-          </div>
-          <div class="input-container">
-            <input
-              type="text"
-              id="customApiUrl"
-              placeholder="Enter custom API URL (or use default)"
-            />
-          </div>
-        </div>
-
         <div class="language-switch model-setting-row">
           <label id="modelLabel">Model</label>
           <div class="model-picker-field">
@@ -1895,61 +2018,46 @@
           <label for="language" id="preferredLanguageLabel"
             >Response Language</label
           >
-          <select id="language">
-            <option value="auto">🌐 Auto</option>
-            <option value="zh">🇨🇳 中文</option>
-            <option value="en">🇺🇸 English</option>
-            <option value="hi">🇮🇳 हिन्दी</option>
-            <option value="es">🇪🇸 Español</option>
-            <option value="fr">🇫🇷 Français</option>
-            <option value="ar">🇸🇦 العربية</option>
-            <option value="bn">🇧🇩 বাংলা</option>
-            <option value="ru">🇷🇺 Русский</option>
-            <option value="pt">🇧🇷 Português</option>
-            <option value="ur">🇵🇰 اردو</option>
-            <option value="de">🇩🇪 Deutsch</option>
-            <option value="ja">🇯🇵 日本語</option>
-            <option value="ko">🇰🇷 한국어</option>
-            <option value="it">🇮🇹 Italiano</option>
-            <option value="nl">🇳🇱 Nederlands</option>
-            <option value="pl">🇵🇱 Polski</option>
-            <option value="pa">🇮🇳 ਪੰਜਾਬੀ</option>
-            <option value="mr">🇮🇳 मराठी</option>
-            <option value="te">🇮🇳 తెలుగు</option>
-            <option value="tr">🇹🇷 Türkçe</option>
-            <option value="ta">🇮🇳 தமிழ்</option>
-            <option value="vi">🇻🇳 Tiếng Việt</option>
-          </select>
-        </div>
-
-        <div class="selection-switch">
-          <label
-            for="rememberWindowSize"
-            id="rememberWindowSizeLabel"
-            class="switch-label-text"
-            data-tooltip="Remember your preferred chat window size for future sessions"
-            >Save Window Size</label
-          >
-          <div class="switch-wrapper">
-            <input
-              type="checkbox"
-              id="rememberWindowSize"
-              class="switch-input"
-            />
-            <label for="rememberWindowSize" class="switch-label"></label>
+          <div class="lang-picker-wrapper" id="langPickerWrapper">
+            <select id="language" class="model-native-select" aria-hidden="true" tabindex="-1">
+              <option value="auto">Auto</option>
+              <option value="zh">中文</option>
+              <option value="en">English</option>
+              <option value="hi">हिन्दी</option>
+              <option value="es">Español</option>
+              <option value="fr">Français</option>
+              <option value="ar">العربية</option>
+              <option value="bn">বাংলা</option>
+              <option value="ru">Русский</option>
+              <option value="pt">Português</option>
+              <option value="ur">اردو</option>
+              <option value="de">Deutsch</option>
+              <option value="ja">日本語</option>
+              <option value="ko">한국어</option>
+              <option value="it">Italiano</option>
+              <option value="nl">Nederlands</option>
+              <option value="pl">Polski</option>
+              <option value="pa">ਪੰਜਾਬੀ</option>
+              <option value="mr">मराठी</option>
+              <option value="te">తెలుగు</option>
+              <option value="tr">Türkçe</option>
+              <option value="ta">தமிழ்</option>
+              <option value="vi">Tiếng Việt</option>
+            </select>
+            <button
+              type="button"
+              id="langPickerTrigger"
+              class="lang-picker-trigger"
+              aria-haspopup="listbox"
+              aria-expanded="false"
+            >
+              <span class="lang-picker-current" id="langPickerCurrent"></span>
+              <svg class="lang-picker-chevron" viewBox="0 0 12 12" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="3 4.5 6 7.5 9 4.5"></polyline>
+              </svg>
+            </button>
+            <div class="lang-picker-menu" id="langPickerMenu" role="listbox" hidden></div>
           </div>
-        </div>
-
-        <div class="selection-switch">
-          <label
-            id="customSystemPromptLabel"
-            class="switch-label-text"
-            data-tooltip="Set a custom system prompt that will be used for all AI interactions"
-            >Custom System Prompt</label
-          >
-          <button id="customSystemPromptButton" class="link-button" style="margin-left: auto;">
-            <span id="customSystemPromptText">Configure</span>
-          </button>
         </div>
 
         <div class="selection-switch">
@@ -1973,35 +2081,83 @@
             <span id="interfaceLanguageValue">English</span>
           </button>
         </div>
-      </div>
 
-      <div class="settings-section">
-        <div class="setting-item">
-          <div class="setting-title">
-            <svg
-              t="1737192355038"
-              class="setting-icon"
-              viewBox="0 0 1024 1024"
-              version="1.1"
-              xmlns="http://www.w3.org/2000/svg"
-              p-id="6074"
-              width="200"
-              height="200"
-            >
-              <path
-                d="M853.333333 213.333333a85.333333 85.333333 0 0 1 85.333334 85.333334v426.666666a85.333333 85.333333 0 0 1-85.333334 85.333334H170.666667a85.333333 85.333333 0 0 1-85.333334-85.333334V298.666667a85.333333 85.333333 0 0 1 85.333334-85.333334h682.666666z m0 42.666667H170.666667a42.666667 42.666667 0 0 0-42.666667 42.666667v426.666666a42.666667 42.666667 0 0 0 42.666667 42.666667h682.666666a42.666667 42.666667 0 0 0 42.666667-42.666667V298.666667a42.666667 42.666667 0 0 0-42.666667-42.666667z m-202.666666 362.666667a32 32 0 1 1 0 64h-277.333334a32 32 0 1 1 0-64h277.333334zM256 469.333333a42.666667 42.666667 0 1 1 0 85.333334 42.666667 42.666667 0 0 1 0-85.333334z m128 0a42.666667 42.666667 0 1 1 0 85.333334 42.666667 42.666667 0 0 1 0-85.333334z m128 0a42.666667 42.666667 0 1 1 0 85.333334 42.666667 42.666667 0 0 1 0-85.333334z m128 0a42.666667 42.666667 0 1 1 0 85.333334 42.666667 42.666667 0 0 1 0-85.333334z m128 0a42.666667 42.666667 0 1 1 0 85.333334 42.666667 42.666667 0 0 1 0-85.333334zM256 341.333333a42.666667 42.666667 0 1 1 0 85.333334 42.666667 42.666667 0 0 1 0-85.333334z m128 0a42.666667 42.666667 0 1 1 0 85.333334 42.666667 42.666667 0 0 1 0-85.333334z m128 0a42.666667 42.666667 0 1 1 0 85.333334 42.666667 42.666667 0 0 1 0-85.333334z m128 0a42.666667 42.666667 0 1 1 0 85.333334 42.666667 42.666667 0 0 1 0-85.333334z m128 0a42.666667 42.666667 0 1 1 0 85.333334 42.666667 42.666667 0 0 1 0-85.333334z"
-                p-id="6075"
-              ></path>
+        <details class="advanced-settings" id="advancedSettings">
+          <summary class="advanced-settings-summary">
+            <span class="advanced-settings-summary-left">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="opacity:0.75;flex-shrink:0;">
+                <line x1="4" y1="21" x2="4" y2="14"></line>
+                <line x1="4" y1="10" x2="4" y2="3"></line>
+                <line x1="12" y1="21" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12" y2="3"></line>
+                <line x1="20" y1="21" x2="20" y2="16"></line>
+                <line x1="20" y1="12" x2="20" y2="3"></line>
+                <line x1="1" y1="14" x2="7" y2="14"></line>
+                <line x1="9" y1="8" x2="15" y2="8"></line>
+                <line x1="17" y1="16" x2="23" y2="16"></line>
+              </svg>
+              <span id="advancedSettingsLabel">Advanced</span>
+            </span>
+            <svg class="advanced-settings-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="6 9 12 15 18 9"></polyline>
             </svg>
-            <a href="#" id="shortcutSettings" class="link-button">
-              <?xml version="1.0" encoding="UTF-8"?>
-              <span id="shortcutSettingsText">Shortcut Settings</span>
-            </a>
+          </summary>
+          <div class="advanced-settings-body">
+            <div class="api-url-container">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <label for="customApiUrl" id="customApiUrlLabel">Custom API URL</label>
+              </div>
+              <div class="input-container">
+                <input
+                  type="text"
+                  id="customApiUrl"
+                  placeholder="Enter custom API URL (or use default)"
+                />
+              </div>
+            </div>
+
+            <div class="selection-switch">
+              <label
+                for="rememberWindowSize"
+                id="rememberWindowSizeLabel"
+                class="switch-label-text"
+                data-tooltip="Remember your preferred chat window size for future sessions"
+                >Save Window Size</label
+              >
+              <div class="switch-wrapper">
+                <input
+                  type="checkbox"
+                  id="rememberWindowSize"
+                  class="switch-input"
+                />
+                <label for="rememberWindowSize" class="switch-label"></label>
+              </div>
+            </div>
+
+            <div class="selection-switch">
+              <label
+                id="customSystemPromptLabel"
+                class="switch-label-text"
+                data-tooltip="Set a custom system prompt that will be used for all AI interactions"
+                >Custom System Prompt</label
+              >
+              <button type="button" id="customSystemPromptButton" class="link-button" style="margin-left: auto;">
+                <span id="customSystemPromptText">Configure</span>
+              </button>
+            </div>
+
+            <div class="selection-switch">
+              <label
+                id="shortcutLabel"
+                class="switch-label-text"
+                >Shortcuts</label
+              >
+              <button type="button" id="shortcutSettings" class="link-button" style="margin-left: auto;">
+                <span id="shortcutSettingsText">Configure</span>
+              </button>
+            </div>
           </div>
-          <div class="setting-description" id="shortcutDescription">
-            Please go to set shortcuts
-          </div>
-        </div>
+        </details>
       </div>
 
       <div class="help-link">

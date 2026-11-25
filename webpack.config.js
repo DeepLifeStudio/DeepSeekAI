@@ -54,7 +54,19 @@ module.exports = {
             return Buffer.from(JSON.stringify(JSON.parse(content), null, 2), 'utf-8')
           }
         },
-        { from: "./src/icons", to: "icons" },
+        {
+          from: "./src/icons",
+          to: "icons",
+          globOptions: {
+            ignore: [
+              "**/.DS_Store",
+              "**/deepseek-official-*",
+              "**/original-*/**",
+              "**/task-*",
+              "**/下载*"
+            ]
+          }
+        },
         { from: "./src/content/styles/style.css", to: "style.css" },
         { from: "./src/popup", to: "popup" },
         { from: "./src/background.js", to: "background.js" },
@@ -62,6 +74,10 @@ module.exports = {
         {
           from: "node_modules/katex/dist/fonts",
           to: "fonts"
+        },
+        {
+          from: "node_modules/flag-icons/flags/4x3/{cn,us,in,es,fr,sa,bd,ru,br,pk,de,jp,kr,it,nl,pl,tr,vn,th,id}.svg",
+          to: "flags/[name][ext]"
         }
       ],
     }),

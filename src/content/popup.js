@@ -116,15 +116,6 @@ export function createPopup(selectedText, rect, hideQuestion = false, removeCall
   resizeHandle.className = 'resize-handle';
   popup.appendChild(resizeHandle);
 
-  // 给resize-handle添加工具提示
-  const resizeTooltip = document.createElement('div');
-  resizeTooltip.className = 'tool-tip';
-  resizeTooltip.textContent = '调整大小';
-  resizeTooltip.style.right = '16px';
-  resizeTooltip.style.bottom = '16px';
-  resizeHandle.classList.add('tooltip-trigger');
-  popup.appendChild(resizeTooltip);
-
   aiResponseElement.id = "ai-response";
   aiResponseElement.style.padding = "0px 30px 0";
   aiResponseElement.style.fontSize = "14px";
@@ -273,6 +264,8 @@ export function createPopup(selectedText, rect, hideQuestion = false, removeCall
   if (messages && messages.length > 0 && messages[0].userQuestion) {
     // 合并选中内容和用户问题为一条消息
     contentToSend = `我有如下内容：\n\n${messages[0].content}\n\n我的问题是：${messages[0].userQuestion}`;
+  } else if (quickActionPrompt && selectedText) {
+    contentToSend = `<source_text>\n${selectedText}\n</source_text>`;
   }
 
   getAIResponse(

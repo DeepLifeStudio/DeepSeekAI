@@ -8,6 +8,7 @@ import { ProviderUIManager } from './ProviderUIManager.js';
 import { EventManager } from './EventManager.js';
 import { TempStateManager } from './TempStateManager.js';
 import { SystemPromptManager } from './SystemPromptManager.js';
+import { getLanguageFlagHtml } from './languageFlags.js';
 
 class PopupManager {
   constructor() {
@@ -114,6 +115,7 @@ class PopupManager {
 
       // 设置UI元素的初始值
       this.uiManager.elements.languageSelect.value = settings.language;
+      initResponseLanguagePicker(this.uiManager.elements.languageSelect);
       this.uiManager.elements.providerSelect.value = currentProvider;
       this.uiManager.elements.selectionEnabled.checked = settings.selectionEnabled;
       this.uiManager.elements.rememberWindowSize.checked = settings.rememberWindowSize;
@@ -330,6 +332,67 @@ function initScrollIndicator() {
     subtree: true,
     attributes: true,
     attributeFilter: ['style', 'class']
+  });
+}
+
+function initResponseLanguagePicker(selectEl) {
+  const trigger = document.getElementById('langPickerTrigger');
+  const current = document.getElementById('langPickerCurrent');
+  const menu = document.getElementById('langPickerMenu');
+  const wrapper = document.getElementById('langPickerWrapper');
+  if (!selectEl || !trigger || !current || !menu || !wrapper) return;
+
+  const renderState = () => {
+    const selectedOption = selectEl.options[selectEl.selectedIndex] || selectEl.options[0];
+    const code = selectedOption?.value || 'auto';
+    const label = selectedOption?.textContent || 'Auto';
+    current.innerHTML = `${getLanguageFlagHtml(code)}<span>${label}</span>`;
+
+    menu.innerHTML = '';
+    Array.from(selectEl.options).forEach((opt) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = `lang-picker-option${opt.value === code ? ' is-selected' : ''}`;
+      btn.setAttribute('role', 'option');
+      btn.setAttribute('aria-selected', String(opt.value === code));
+      btn.innerHTML = `${getLanguageFlagHtml(opt.value)}<span>${opt.textContent}</span>`;
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        selectEl.value = opt.value;
+        selectEl.dispatchEvent(new Event('change', { bubbles: true }));
+        renderState();
+        menu.hidden = true;
+        trigger.setAttribute('aria-expanded', 'false');
+      });
+      menu.appendChild(btn);
+    });
+  };
+
+  renderState();
+
+  if (trigger.dataset.bound === 'true') return;
+  trigger.dataset.bound = 'true';
+
+  trigger.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isOpen = !menu.hidden;
+    menu.hidden = isOpen;
+    trigger.setAttribute('aria-expanded', String(!isOpen));
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!menu.hidden && !wrapper.contains(e.target)) {
+      menu.hidden = true;
+      trigger.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !menu.hidden) {
+      menu.hidden = true;
+      trigger.setAttribute('aria-expanded', 'false');
+      trigger.focus();
+    }
   });
 }
 

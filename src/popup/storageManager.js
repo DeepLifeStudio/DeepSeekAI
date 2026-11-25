@@ -40,7 +40,7 @@ export class StorageManager {
             model: data.model || '',
             provider: data.provider || 'deepseek',
             selectionEnabled: typeof data.selectionEnabled === 'undefined' ? true : data.selectionEnabled,
-            rememberWindowSize: typeof data.rememberWindowSize === 'undefined' ? false : data.rememberWindowSize,
+            rememberWindowSize: typeof data.rememberWindowSize === 'undefined' ? true : data.rememberWindowSize,
             pinWindow: typeof data.pinWindow === 'undefined' ? false : data.pinWindow,
             customModels: data.customModels || {},
             customSystemPrompt: data.customSystemPrompt || '',
